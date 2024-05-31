@@ -8,12 +8,13 @@ import java.sql.Date;
 import javax.persistence.*;
 
 @Entity
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = "username")})
 public class User extends Model implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(unique = true)
+    @Column(nullable = false , length = 20)
     private String username;
     private String password;
     private String firstName;
