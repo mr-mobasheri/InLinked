@@ -9,7 +9,8 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.Query;
 import java.util.ArrayList;
-import java.util.Formatter;
+import java.util.List;
+
 
 public class DAO {
     private Configuration cfg;
@@ -60,6 +61,25 @@ public class DAO {
         }
         return user;
     }
+
+    public List<Message> getSentMessages(String username) {
+        User user = getUser(username);
+        if (user == null) {
+            return null;
+        } else {
+            return user.getSentMessages();
+        }
+    }
+
+    public List<Message> getReceivedMessages(String username) {
+        User user = getUser(username);
+        if (user == null) {
+            return null;
+        } else {
+            return user.getReceivedMessages();
+        }
+    }
+
 
     public void delete(Model model) {
         Transaction transaction = null;
@@ -125,5 +145,17 @@ public class DAO {
         return messages;
     }
 
-
+    public void deleteAllUsers() {
+        Transaction transaction = null;
+        try (Session session = cfg.buildSessionFactory().getCurrentSession()) {
+            transaction = session.beginTransaction();
+            session.createNativeQuery("DROP TABLE IF EXISTS USER").executeUpdate();
+            transaction.commit();
+        } catch (HibernateException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+        }
+    }
 }

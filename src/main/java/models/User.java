@@ -4,16 +4,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.List;
 
 import javax.persistence.*;
 
 @Entity
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = "username")})
 public class User extends Model implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(unique = true)
+    @Column(nullable = false, length = 20)
     private String username;
     private String password;
     private String firstName;
@@ -23,17 +25,21 @@ public class User extends Model implements Serializable {
     private String country;
     private Date birthday;
     private Date dateOfCreat;
+    @OneToMany(mappedBy = "sender")
+    private List<Message> sentMessages;
+    @OneToMany(mappedBy = "receiver")
+    private List<Message> receivedMessages;
 
     public User() {
     }
 
-    public User(String username, String firstName, String lastName, String email, String phoneNumber, String password, String country, Date birthday) {
+    public User(String username,String password, String firstName, String lastName, String email, String phoneNumber,  String country, Date birthday) {
         this.username = username;
+        this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.phoneNumber = phoneNumber;
-        this.password = password;
         this.country = country;
         this.birthday = birthday;
         this.dateOfCreat = new Date(System.currentTimeMillis());
@@ -111,4 +117,19 @@ public class User extends Model implements Serializable {
         this.dateOfCreat = dateOfCreat;
     }
 
+    public List<Message> getReceivedMessages() {
+        return receivedMessages;
+    }
+
+    public void setReceivedMessages(List<Message> receivedMessages) {
+        this.receivedMessages = receivedMessages;
+    }
+
+    public List<Message> getSentMessages() {
+        return sentMessages;
+    }
+
+    public void setSentMessages(List<Message> sentMessages) {
+        this.sentMessages = sentMessages;
+    }
 }
