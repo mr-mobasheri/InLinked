@@ -15,7 +15,11 @@ public class User extends Model implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+<<<<<<< HEAD
     @Column(nullable = false, length = 20)
+=======
+    @Column(nullable = false , length = 20)
+>>>>>>> c384bbee22cf340a45f1734a00577fdfb76179c6
     private String username;
     private String password;
     private String firstName;
@@ -117,6 +121,7 @@ public class User extends Model implements Serializable {
         this.dateOfCreat = dateOfCreat;
     }
 
+<<<<<<< HEAD
     public List<Message> getReceivedMessages() {
         return receivedMessages;
     }
@@ -133,3 +138,6 @@ public class User extends Model implements Serializable {
         this.sentMessages = sentMessages;
     }
 }
+=======
+}
+>>>>>>> c384bbee22cf340a45f1734a00577fdfb76179c6
