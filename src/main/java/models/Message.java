@@ -14,16 +14,14 @@ public class Message extends Model implements Serializable {
 
 
     private String text;
-
-    private Date dateOfCreat;
-
+    private long dateOfCreat;
 
     @ManyToOne()
-    @JoinColumn(name = "sender_username", referencedColumnName = "username")
+    @JoinColumn(referencedColumnName = "username")
     private User sender;
 
     @ManyToOne()
-    @JoinColumn(name = "receiver_id", referencedColumnName = "username")
+    @JoinColumn(referencedColumnName = "username")
     private User receiver;
 
     public Message(String text) {
@@ -35,7 +33,7 @@ public class Message extends Model implements Serializable {
 
     public Message(String text, User sender, User receiver) {
         this.text = text;
-        this.dateOfCreat = new Date(System.currentTimeMillis());
+        this.dateOfCreat = System.currentTimeMillis();
         this.sender = sender;
         this.receiver = receiver;
     }
@@ -48,12 +46,12 @@ public class Message extends Model implements Serializable {
         return id;
     }
 
-    public Date getDateOfCreat() {
-        return dateOfCreat;
+    public void setDateOfCreat(long dateOfCreat) {
+        this.dateOfCreat = dateOfCreat;
     }
 
-    public void setDateOfCreat(Date dateOfCreat) {
-        this.dateOfCreat = dateOfCreat;
+    public long getDateOfCreat() {
+        return dateOfCreat;
     }
 
     public void setId(int id) {
@@ -79,4 +77,5 @@ public class Message extends Model implements Serializable {
     public void setReceiver(User receiver) {
         this.receiver = receiver;
     }
+    
 }
