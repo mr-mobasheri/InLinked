@@ -29,6 +29,8 @@ public class User extends Model implements Serializable {
     private List<Message> sentMessages;
     @OneToMany(mappedBy = "receiver")
     private List<Message> receivedMessages;
+    @OneToMany(mappedBy = "sender")
+    private List<Post> posts;
 
     public User() {
     }
@@ -45,6 +47,7 @@ public class User extends Model implements Serializable {
         this.dateOfCreat = System.currentTimeMillis();
         sentMessages = new ArrayList<>();
         receivedMessages = new ArrayList<>();
+        posts = new ArrayList<>();
     }
 
     public String getUsername() {
@@ -57,6 +60,10 @@ public class User extends Model implements Serializable {
 
     public String getFirstName() {
         return firstName;
+    }
+
+    public List<Post> getPosts() {
+        return posts;
     }
 
     public String getLastName() {
@@ -105,6 +112,10 @@ public class User extends Model implements Serializable {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
     }
 
     public void setCountry(String country) {
