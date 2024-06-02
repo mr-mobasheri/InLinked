@@ -77,5 +77,5 @@ public class Message extends Model implements Serializable {
     public void setReceiver(User receiver) {
         this.receiver = receiver;
     }
-    
+
 }

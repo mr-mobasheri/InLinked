@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.*;
@@ -14,12 +15,7 @@ public class User extends Model implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
-<<<<<<< HEAD
     @Column(nullable = false, length = 20)
-=======
-    @Column(nullable = false , length = 20)
->>>>>>> c384bbee22cf340a45f1734a00577fdfb76179c6
     private String username;
     private String password;
     private String firstName;
@@ -28,7 +24,7 @@ public class User extends Model implements Serializable {
     private String phoneNumber;
     private String country;
     private Date birthday;
-    private Date dateOfCreat;
+    private long dateOfCreat;
     @OneToMany(mappedBy = "sender")
     private List<Message> sentMessages;
     @OneToMany(mappedBy = "receiver")
@@ -37,7 +33,7 @@ public class User extends Model implements Serializable {
     public User() {
     }
 
-    public User(String username,String password, String firstName, String lastName, String email, String phoneNumber,  String country, Date birthday) {
+    public User(String username, String password, String firstName, String lastName, String email, String phoneNumber, String country, Date birthday) {
         this.username = username;
         this.password = password;
         this.firstName = firstName;
@@ -46,7 +42,9 @@ public class User extends Model implements Serializable {
         this.phoneNumber = phoneNumber;
         this.country = country;
         this.birthday = birthday;
-        this.dateOfCreat = new Date(System.currentTimeMillis());
+        this.dateOfCreat = System.currentTimeMillis();
+        sentMessages = new ArrayList<>();
+        receivedMessages = new ArrayList<>();
     }
 
     public String getUsername() {
@@ -81,7 +79,7 @@ public class User extends Model implements Serializable {
         return birthday;
     }
 
-    public Date getDateOfCreat() {
+    public long getDateOfCreat() {
         return dateOfCreat;
     }
 
@@ -117,11 +115,10 @@ public class User extends Model implements Serializable {
         this.birthday = birthday;
     }
 
-    public void setDateOfCreat(Date dateOfCreat) {
+    public void setDateOfCreat(long dateOfCreat) {
         this.dateOfCreat = dateOfCreat;
     }
 
-<<<<<<< HEAD
     public List<Message> getReceivedMessages() {
         return receivedMessages;
     }
@@ -138,6 +135,4 @@ public class User extends Model implements Serializable {
         this.sentMessages = sentMessages;
     }
 }
-=======
-}
->>>>>>> c384bbee22cf340a45f1734a00577fdfb76179c6
+
