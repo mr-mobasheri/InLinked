@@ -15,7 +15,7 @@ public class UserController extends Controller {
     }
 
     public void createUser(String username, String password, String firstName, String lastName, String email,
-                           String phoneNumber, String country, Date birthday) {
+                           String phoneNumber, String country, long birthday) {
         User user = new User(username, password, firstName, lastName, email, phoneNumber, country, birthday);
         dao.insert(user);
     }
@@ -26,7 +26,7 @@ public class UserController extends Controller {
     }
 
     public void updateUser(String username, String password, String firstName, String lastName, String email,
-                           String phoneNumber, String country, Date birthday) throws SQLException {
+                           String phoneNumber, String country, long birthday){
         User user = dao.getUser(username);
         user.setPassword(password);
         user.setFirstName(firstName);
@@ -37,11 +37,12 @@ public class UserController extends Controller {
         user.setBirthday(birthday);
         dao.update(user);
     }
-    public void deleteAllUsers(){
+
+    public void deleteAllUsers() {
         dao.deleteAllUsers();
     }
 
-    public void deleteAllMessages(){
+    public void deleteAllMessages() {
         dao.deleteAllMessages();
     }
 
@@ -76,9 +77,9 @@ public class UserController extends Controller {
 
     public static void main(String[] args) {
         UserController userController = new UserController();
-        userController.deleteAllUsers();
-        userController.createUser("mrm1223", "12345678", "mohammad", "mobash", "mrm268", "0913", "Iran", new Date(2004, 11, 16));
-        userController.createUser("ali2020" , "123" , "ali" , "nour" , "alinour2030@gmail.com" , "09964103631" , "Iran" , new Date(2005 , 5 , 21) );
+//        userController.deleteAllUsers();
+//        userController.createUser("mrm1223", "12345678", "mohammad", "mobash", "mrm268", "0913", "Iran", new Date(2004, 11, 16));
+//        userController.createUser("ali2020" , "123" , "ali" , "nour" , "alinour2030@gmail.com" , "09964103631" , "Iran" , new Date(2005 , 5 , 21) );
 //        User user = new User("mrm1223", "mohammad", "mobash", "mrm268", "0913",
 //                "12345678", "Iran", new Date(2004, 11, 16));
 //        userController.deleteUser("mrm1223");
