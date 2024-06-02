@@ -2,12 +2,14 @@ package dataAccess;
 
 import models.Message;
 import models.Model;
+import models.Post;
 import models.User;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.Query;
+import org.hibernate.Hibernate;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,10 +39,9 @@ public class DAO {
         Transaction transaction = null;
         try (Session session = cfg.buildSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            String hql = "FROM User WHERE username = :username";
-            Query query = session.createQuery(hql);
-            query.setParameter("username", username);
-            user = (User) query.uniqueResult();
+            user = (User) session.createQuery("FROM User WHERE username = :username")
+                    .setParameter("username", username)
+                    .uniqueResult();
             transaction.commit();
         }
         return user;
@@ -48,20 +49,22 @@ public class DAO {
 
     public List<Message> getSentMessages(String username) {
         User user = getUser(username);
-        if (user == null) {
-            return null;
-        } else {
+        if (user != null) {
+//            Initialize the posts collection if it 's lazy-loaded
+            Hibernate.initialize(user.getSentMessages());
             return user.getSentMessages();
         }
+        return null;
     }
 
     public List<Message> getReceivedMessages(String username) {
         User user = getUser(username);
-        if (user == null) {
-            return null;
-        } else {
+        if (user != null) {
+//            Initialize the posts collection if it 's lazy-loaded
+            Hibernate.initialize(user.getReceivedMessages());
             return user.getReceivedMessages();
         }
+        return null;
     }
 
 
@@ -155,6 +158,16 @@ public class DAO {
             }
             e.printStackTrace();
         }
+    }
+
+    public List<Post> getPostsByUsername(String username) {
+        User user = getUser(username);
+        if (user != null) {
+//            Initialize the posts collection if it's lazy-loaded
+            Hibernate.initialize(user.getPosts());
+            return user.getPosts();
+        }
+        return null;
     }
 
 }
