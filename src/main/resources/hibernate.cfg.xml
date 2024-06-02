@@ -26,5 +26,6 @@
         <!-- <property name="hbm2ddl.auto">update</property> -->
         <mapping class="models.User"/>
         <mapping class="models.Message"/>
+        <mapping class="models.Post"/>
     </session-factory>
 </hibernate-configuration>
