@@ -23,22 +23,6 @@ public class DAO {
         }
     }
 
-
-//    public static void main(String[] args) {
-//        User user = new User();
-//        user.setUsername("mobash");
-//        insertUser(user);
-//        Message message = new Message("hi this is a message just for Me!");
-//        insertUser(message);
-//        ArrayList<User> users = getAllUsers();
-//        for (User user1 : users) {
-//            System.out.println(user1.getUsername());
-//        }
-//        for (Message msg : getAllMessages()) {
-//            System.out.println(msg.getText());
-//        }
-//    }
-
     public void insert(Model model) {
         Transaction transaction = null;
         try (Session session = cfg.buildSessionFactory().openSession()) {
@@ -158,4 +142,19 @@ public class DAO {
             e.printStackTrace();
         }
     }
+
+    public void deleteAllMessages() {
+        Transaction transaction = null;
+        try (Session session = cfg.buildSessionFactory().getCurrentSession()) {
+            transaction = session.beginTransaction();
+            session.createNativeQuery("DROP TABLE IF EXISTS MESSAGE").executeUpdate();
+            transaction.commit();
+        } catch (HibernateException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+        }
+    }
+
 }

@@ -41,6 +41,10 @@ public class UserController extends Controller {
         dao.deleteAllUsers();
     }
 
+    public void deleteAllMessages(){
+        dao.deleteAllMessages();
+    }
+
     public boolean isUserExists(String username) {
         if (username == null)
             return false;
