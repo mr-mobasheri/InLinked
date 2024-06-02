@@ -23,7 +23,7 @@ public class User extends Model implements Serializable {
     private String email;
     private String phoneNumber;
     private String country;
-    private Date birthday;
+    private long birthday;
     private long dateOfCreat;
     @OneToMany(mappedBy = "sender")
     private List<Message> sentMessages;
@@ -35,7 +35,8 @@ public class User extends Model implements Serializable {
     public User() {
     }
 
-    public User(String username, String password, String firstName, String lastName, String email, String phoneNumber, String country, Date birthday) {
+    public User(String username, String password, String firstName, String lastName, String email,
+                String phoneNumber, String country, long birthday) {
         this.username = username;
         this.password = password;
         this.firstName = firstName;
@@ -82,7 +83,7 @@ public class User extends Model implements Serializable {
         return country;
     }
 
-    public Date getBirthday() {
+    public long getBirthday() {
         return birthday;
     }
 
@@ -122,7 +123,7 @@ public class User extends Model implements Serializable {
         this.country = country;
     }
 
-    public void setBirthday(Date birthday) {
+    public void setBirthday(long birthday) {
         this.birthday = birthday;
     }
 
