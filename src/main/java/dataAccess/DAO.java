@@ -65,13 +65,20 @@ public class DAO {
     }
 
     public List<Message> getReceivedMessages(String username) {
-        User user = getUser(username);
-        if (user != null) {
-//            Initialize the receivedMessages collection if it 's lazy-loaded
-            Hibernate.initialize(user.getReceivedMessages());
-            return user.getReceivedMessages();
+        try (Session session = cfg.buildSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
+            User user = (User) session.createQuery("FROM User WHERE username = :username")
+                    .setParameter("username", username)
+                    .uniqueResult();
+            if (user != null) {
+//            Initialize the posts collection if it's lazy-loaded
+                Hibernate.initialize(user.getReceivedMessages());
+                transaction.commit();
+                return user.getReceivedMessages();
+            }
+            transaction.commit();
+            return null;
         }
-        return null;
     }
 
 
