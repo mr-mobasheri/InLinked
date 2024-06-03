@@ -161,20 +161,35 @@ public class DAO {
     }
 
     public List<Post> getPostsByUsername(String username) {
-        User user = getUser(username);
-        if (user != null) {
+        try (Session session = cfg.buildSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
+            User user = (User) session.createQuery("FROM User WHERE username = :username")
+                    .setParameter("username", username)
+                    .uniqueResult();
+            if (user != null) {
 //            Initialize the posts collection if it's lazy-loaded
-            Hibernate.initialize(user.getPosts());
-            return user.getPosts();
+                Hibernate.initialize(user.getPosts());
+                transaction.commit();
+                return user.getPosts();
+            }
+            transaction.commit();
+            return null;
         }
-        return null;
     }
 
     public void addPost(Post post, String username) {
-        User user = getUser(username);
-        if (user != null) {
-            user.getPosts().add(post);
-            update(user);
+        try (Session session = cfg.buildSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
+            User user = (User) session.createQuery("FROM User WHERE username = :username")
+                    .setParameter("username", username)
+                    .uniqueResult();
+            if (user != null) {
+//            Initialize the posts collection if it's lazy-loaded
+                post.setSender(user);
+                user.getPosts().add(post);
+                session.update(user);
+            }
+            transaction.commit();
         }
     }
 
