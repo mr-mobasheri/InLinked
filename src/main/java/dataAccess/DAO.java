@@ -207,4 +207,26 @@ public class DAO {
         }
     }
 
+    public void addMessage(Message message, String senderUsername , String receiverUsername ) {
+        try (Session session = cfg.buildSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
+            User sender = (User) session.createQuery("FROM User WHERE username = :username")
+                    .setParameter("username", senderUsername)
+                    .uniqueResult();
+
+            User receiver = (User) session.createQuery("FROM User WHERE username = :username")
+                    .setParameter("username", receiverUsername)
+                    .uniqueResult();
+            if (sender != null && receiver != null ) {
+                message.setSender(sender);
+                message.setReceiver(receiver);
+                sender.getSentMessages().add(message);
+                receiver.getReceivedMessages().add(message);
+                session.update(sender);
+                session.update(receiver);
+            }
+            transaction.commit();
+        }
+    }
+
 }
