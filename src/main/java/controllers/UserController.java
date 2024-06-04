@@ -1,13 +1,10 @@
 package controllers;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.sql.Date;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dataAccess.*;
 import models.*;
+import utils.UserNotFoundException;
 
 public class UserController extends Controller {
 
@@ -20,10 +17,10 @@ public class UserController extends Controller {
         dao.insert(user);
     }
 
-    public void deleteUser(String username) {
+    public void deleteUser(String username) throws UserNotFoundException {
         User user = dao.getUser(username);
         if(user == null) {
-            throw new IllegalArgumentException();
+            throw new UserNotFoundException();
         }
         dao.delete(user);
     }
@@ -50,9 +47,7 @@ public class UserController extends Controller {
     }
 
     public boolean isUserExists(String username) {
-        if (username == null)
-            return false;
-        return dao.getUser(username) != null;
+        return dao.isUserExists(username);
     }
 
     public String getUsers() {
@@ -68,7 +63,7 @@ public class UserController extends Controller {
     public String getUser(String username) {
         User user = dao.getUser(username);
         if (user == null)
-            return "No User";
+            return "user not found!";
         ObjectMapper objectMapper = new ObjectMapper();
         String response = null;
         try {
