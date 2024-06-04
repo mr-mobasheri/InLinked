@@ -3,26 +3,25 @@ package controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import models.Message;
+import utils.UserNotFoundException;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MessageController extends Controller {
 
     public MessageController() {
     }
 
-    public void createMessage(String text, String sender, String receiver) {
+    public void createMessage(String text, String sender, String receiver) throws UserNotFoundException {
         Message message = new Message(text);
         dao.addMessage(message , sender , receiver);
     }
 
-    public String getSentMessages(String username , String target) {
-        ArrayList<Message> temp = (ArrayList<Message>) dao.getSentMessages(username);
-        ArrayList<Message> messages = new ArrayList<>();
-        for (Message message : temp){
-            if (message.getReceiver().getUsername().equals(target)){
-                messages.add(message);
-            }
+    public String getMessagesBetweenUsers(String sender , String target) {
+        List<Message> messages = dao.getMessagesBetweenUsers(sender, target);
+        if(messages == null) {
+            return "user not found!";
         }
         ObjectMapper objectMapper = new ObjectMapper();
         try {
@@ -34,7 +33,10 @@ public class MessageController extends Controller {
 
 
     public String getReceivedMessages(String username) {
-        ArrayList<Message> messages = (ArrayList<Message>) dao.getReceivedMessages(username);
+        List<Message> messages = dao.getReceivedMessages(username);
+        if(messages == null) {
+            return "user not found!";
+        }
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             return objectMapper.writeValueAsString(messages);
@@ -47,9 +49,4 @@ public class MessageController extends Controller {
         dao.deleteAllMessages();
     }
 
-
-//    public static void main(String[] args) {
-//        MessageController messageController = new MessageController();
-//        messageController.createMessage("hello", "ali" , "mahdi");
-//    }
 }
