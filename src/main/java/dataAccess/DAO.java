@@ -56,7 +56,7 @@ public class DAO {
                     .setParameter("username", username)
                     .uniqueResult();
             if (user != null) {
-//            Initialize the posts collection if it's lazy-loaded
+//            Initialize the sentMessages collection if it's lazy-loaded
                 Hibernate.initialize(user.getSentMessages());
                 transaction.commit();
                 return user.getSentMessages();
@@ -88,7 +88,7 @@ public class DAO {
                     .setParameter("username", username)
                     .uniqueResult();
             if (user != null) {
-//            Initialize the posts collection if it's lazy-loaded
+//            Initialize the receivedMessages collection if it's lazy-loaded
                 Hibernate.initialize(user.getReceivedMessages());
                 transaction.commit();
                 return user.getReceivedMessages();
