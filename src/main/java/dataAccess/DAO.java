@@ -66,6 +66,9 @@ public class DAO {
     }
 
     public List<Message> getMessagesBetweenUsers(String senderUsername, String receiverUsername) {
+        if(!isUserExists(senderUsername) || !isUserExists(receiverUsername)) {
+            return null;
+        }
         try (Session session = cfg.buildSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
             String hql = "FROM Message m WHERE m.sender.username = :senderUsername AND m.receiver.username = :receiverUsername";
@@ -239,6 +242,15 @@ public class DAO {
                 session.update(receiver);
             }
             transaction.commit();
+        }
+    }
+
+    public boolean isUserExists(String username) {
+        try (Session session = cfg.buildSessionFactory().openSession()) {
+            String hql = "SELECT count(u.id) FROM User u WHERE u.username = :username";
+            Long count = (Long) session.createQuery("SELECT count(u.id) FROM User u WHERE u.username = :username")
+                    .setParameter("username", username).uniqueResult();
+            return count > 0;
         }
     }
 
