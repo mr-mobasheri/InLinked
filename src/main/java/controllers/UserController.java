@@ -22,6 +22,9 @@ public class UserController extends Controller {
 
     public void deleteUser(String username) {
         User user = dao.getUser(username);
+        if(user == null) {
+            throw new IllegalArgumentException();
+        }
         dao.delete(user);
     }
 
