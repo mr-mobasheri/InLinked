@@ -1,5 +1,3 @@
-package utils;
-
 import HttpHandler.MessageHandler;
 import com.sun.net.httpserver.HttpServer;
 
