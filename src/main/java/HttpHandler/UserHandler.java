@@ -6,6 +6,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import controllers.*;
+import utils.UserNotFoundException;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -72,8 +73,8 @@ public class UserHandler implements HttpHandler {
                         // get the username from the path and delete it.
                         userController.deleteUser(pathDetails[pathDetails.length - 1]);
                         response = "User deleted successfully";
-                    } catch (IllegalArgumentException e) {
-                        System.out.println("IllegalArgumentException: " + e.getMessage());
+                    } catch (UserNotFoundException e) {
+                        System.out.println("UserNotFoundException: " + e.getMessage());
                         response = "user not found!";
                     }
                 }

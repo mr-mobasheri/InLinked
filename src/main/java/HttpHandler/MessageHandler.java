@@ -4,7 +4,9 @@ package HttpHandler;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import controllers.MessageController;
+import org.json.JSONException;
 import org.json.JSONObject;
+import utils.UserNotFoundException;
 
 import java.io.*;
 
@@ -17,15 +19,12 @@ public class MessageHandler implements HttpHandler {
         String[] pathDetails = exchange.getRequestURI().getPath().split("/");
         String response = "";
         switch (method) {
-            case "GET": //port:id/direct/person1/person2
-
-                if (pathDetails.length == 3) { //port:id/direct/person
+            case "GET": //port:id/messages/person1/person2
+                if (pathDetails.length == 3) { //port:id/messages/person
                     response = messageController.getReceivedMessages(pathDetails[2]);
-                    break;
+                } else {
+                    response = messageController.getMessagesBetweenUsers(pathDetails[2], pathDetails[3]);
                 }
-
-                response = messageController.getSentMessages(pathDetails[2], pathDetails[3]);
-
                 break;
             case "POST":
                 // Read the request body as String.
@@ -36,11 +35,23 @@ public class MessageHandler implements HttpHandler {
                 while ((line = reader.readLine()) != null) {
                     requestBody.append(line);
                 }
-                requestBodyStream.close();
+                reader.close();
                 // Process the user creation based on the request body.
-                JSONObject jsonObject = new JSONObject(requestBody);
-                messageController.createMessage(jsonObject.getString("text"), jsonObject.getString("sender"), jsonObject.getString("receiver"));
-                response = "Done!";
+                JSONObject jsonObject = new JSONObject(requestBody.toString());
+                try {
+                    messageController.createMessage(
+                            jsonObject.getString("text"),
+                            jsonObject.getString("sender"),
+                            jsonObject.getString("receiver")
+                    );
+                    response = "Done!";
+                } catch (UserNotFoundException e) {
+                    System.out.println("UserNotFoundException: " + e.getMessage());
+                    response = "user not found!";
+                } catch (JSONException e) {
+                    System.out.println("JSONException: " + e.getMessage());
+                    response = "Incorrect json format: " + e.getMessage();
+                }
                 break;
 //            case "DELETE":
 //                if (pathDetails.length == 2) {
