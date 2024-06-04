@@ -13,6 +13,7 @@ public class Server {
             server.createContext("/users", new UserHandler());
             server.createContext("/messages", new MessageHandler());
             server.start();
+            System.out.println("Server is running...");
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
