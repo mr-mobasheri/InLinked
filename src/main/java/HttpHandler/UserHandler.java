@@ -2,6 +2,8 @@ package HttpHandler;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import org.hibernate.exception.ConstraintViolationException;
+import org.json.JSONException;
 import org.json.JSONObject;
 import controllers.*;
 
@@ -10,6 +12,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.jar.JarException;
 
 public class UserHandler implements HttpHandler {
     @Override
@@ -36,23 +40,43 @@ public class UserHandler implements HttpHandler {
                 while ((line = reader.readLine()) != null) {
                     requestBody.append(line);
                 }
-                requestBodyStream.close();
+                reader.close();
                 // Process the user creation based on the request body.
-                JSONObject jsonObject = new JSONObject(requestBody);
-                userController.createUser(jsonObject.getString("username"), jsonObject.getString("password"),
-                        jsonObject.getString("firstname"), jsonObject.getString("lastname"),
-                        jsonObject.getString("email"), jsonObject.getString("phoneNumber"),
-                        jsonObject.getString("country"), Integer.parseInt(jsonObject.getString("birthday")));
-                response = "New user saved!";
+                try {
+                    JSONObject jsonObject = new JSONObject(requestBody.toString());
+                    userController.createUser(
+                            jsonObject.getString("username"),
+                            jsonObject.getString("password"),
+                            jsonObject.getString("firstname"),
+                            jsonObject.getString("lastname"),
+                            jsonObject.getString("email"),
+                            jsonObject.getString("phoneNumber"),
+                            jsonObject.getString("country"),
+                            jsonObject.getLong("birthday")
+                    );
+                    response = "New user saved.";
+                } catch (JSONException e) {
+                    System.out.println("JSONException: " + e.getMessage());
+                    response = "Incorrect json format: " + e.getMessage();
+                } catch (ConstraintViolationException e) {
+                    e.printStackTrace();
+                    response = "Constraint Violation!";
+                }
                 break;
             case "DELETE":
                 if (pathDetails.length == 2) {
                     userController.deleteAllUsers();
+                    response = "All users were successfully deleted";
                 } else {
-                    // get the username from the path and delete it.
-                    userController.deleteUser(pathDetails[pathDetails.length - 1]);
+                    try {
+                        // get the username from the path and delete it.
+                        userController.deleteUser(pathDetails[pathDetails.length - 1]);
+                        response = "User deleted successfully";
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("IllegalArgumentException: " + e.getMessage());
+                        response = "user not found!";
+                    }
                 }
-                response = "User deleted successfully";
                 break;
         }
         exchange.sendResponseHeaders(200, response.getBytes().length);
