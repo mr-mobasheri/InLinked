@@ -9,6 +9,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.Hibernate;
+import org.hibernate.query.Query;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +65,18 @@ public class DAO {
         }
     }
 
+    public List<Message> getMessagesBetweenUsers(String senderUsername, String receiverUsername) {
+        try (Session session = cfg.buildSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
+            String hql = "FROM Message m WHERE m.sender.username = :senderUsername AND m.receiver.username = :receiverUsername";
+            Query<Message> query = session.createQuery(hql, Message.class);
+            query.setParameter("senderUsername", senderUsername);
+            query.setParameter("receiverUsername", receiverUsername);
+            transaction.commit();
+            return query.getResultList();
+        }
+    }
+
     public List<Message> getReceivedMessages(String username) {
         try (Session session = cfg.buildSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
@@ -86,7 +99,7 @@ public class DAO {
         Transaction transaction = null;
         try (Session session = cfg.buildSessionFactory().getCurrentSession()) {
             transaction = session.beginTransaction();
-            session.delete((User) model);
+            session.delete(model);
             transaction.commit();
         } catch (HibernateException e) {
             if (transaction != null) {
