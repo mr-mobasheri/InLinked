@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.client.SignUpController">
+   <left>
+      <AnchorPane prefHeight="500.0" prefWidth="350.0" style="-fx-background-color: #0598ff;" BorderPane.alignment="CENTER">
+         <children>
+            <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="75.0" layoutY="223.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@pictures/logo.png" />
+               </image>
+            </ImageView>
+         </children>
+      </AnchorPane>
+   </left>
+   <center>
+      <AnchorPane BorderPane.alignment="CENTER">
+         <children>
+            <TextField fx:id="emailTextfield" layoutX="70.0" layoutY="95.0" prefHeight="20.0" prefWidth="210.0" promptText="Email" style="-fx-background-color: transparent; -fx-border-color: #0598ff; -fx-border-width: 0px 0px 2px 0px;" />
+            <Text fill="#0598ff" layoutX="135.0" layoutY="84.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Sign Up" textAlignment="CENTER">
+               <font>
+                  <Font size="23.0" />
+               </font>
+            </Text>
+            <FontAwesomeIcon fill="#0598ff" glyphName="USERS" layoutX="156.0" layoutY="43.0" selectionFill="#0598ff" size="35" text="" />
+            <TextField fx:id="firstnameTextfield" layoutX="70.0" layoutY="211.0" prefHeight="20.0" prefWidth="210.0" promptText="First name" style="-fx-background-color: transparent; -fx-border-color: #0598ff; -fx-border-width: 0px 0px 2px 0px;" />
+            <TextField fx:id="lastnameTextfield" layoutX="70.0" layoutY="267.0" prefHeight="20.0" prefWidth="210.0" promptText="Last name" style="-fx-background-color: transparent; -fx-border-color: #0598ff; -fx-border-width: 0px 0px 2px 0px;">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+            </TextField>
+            <ImageView fitHeight="24.0" fitWidth="21.0" layoutX="39.0" layoutY="101.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@pictures/email.png" />
+               </image>
+            </ImageView>
+            <FontAwesomeIcon fill="#0598ff" glyphName="USER" layoutX="43.0" layoutY="237.0" size="20" text="" wrappingWidth="12.428571701049805" />
+            <FontAwesomeIcon fill="#0598ff" glyphName="KEY" layoutX="42.0" layoutY="355.0" selectionFill="#0598ff" size="20" />
+            <FontAwesomeIcon fill="#0598ff" glyphName="USER" layoutX="43.0" layoutY="298.0" size="20" text="" wrappingWidth="12.428571701049805" />
+            <FontAwesomeIcon fill="#0598ff" glyphName="KEY" layoutX="44.0" layoutY="410.0" selectionFill="#0598ff" size="20" />
+            <Label fx:id="emailLabel" layoutX="69.0" layoutY="126.0" prefHeight="18.0" prefWidth="194.0" />
+            <Button fx:id="signUpButton" layoutX="60.0" layoutY="440.0" mnemonicParsing="false" onAction="#signUpButtonPressed" prefHeight="27.0" prefWidth="221.0" style="-fx-background-color: #0598ff;" text="Sign Up" textFill="WHITE">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Button>
+            <Button layoutX="314.0" layoutY="13.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="17.0" style="-fx-background-color: transparent;">
+               <graphic>
+                  <FontAwesomeIcon fx:id="exit" fill="#0598ff" glyphName="CLOSE" onKeyPressed="#exitPressed" onMouseClicked="#exitPressed" size="15" text="" wrappingWidth="19.785714149475098" />
+               </graphic>
+            </Button>
+            <TextField fx:id="usernameTextfield" layoutX="70.0" layoutY="155.0" prefHeight="20.0" prefWidth="210.0" promptText="Username" style="-fx-background-color: transparent; -fx-border-color: #0598ff; -fx-border-width: 0px 0px 2px 0px;" />
+            <FontAwesomeIcon fill="#0598ff" glyphName="USER" layoutX="43.0" layoutY="180.0" size="20" />
+            <PasswordField fx:id="passTextfield" layoutX="70.0" layoutY="324.0" prefHeight="20.0" prefWidth="210.0" promptText="Password" style="-fx-background-color: transparent; -fx-border-color: #0598ff; -fx-border-width: 0px 0px 2px 0px;" />
+            <Label fx:id="usernameLabel" layoutX="69.0" layoutY="183.0" prefHeight="18.0" prefWidth="194.0" />
+            <Label fx:id="firstnameLabel" layoutX="69.0" layoutY="241.0" prefHeight="18.0" prefWidth="194.0" />
+            <Label fx:id="lastnameLabel" layoutX="69.0" layoutY="301.0" prefHeight="18.0" prefWidth="194.0" />
+            <Label fx:id="passLabel" layoutX="70.0" layoutY="354.0" prefHeight="17.0" prefWidth="246.0" wrapText="true">
+               <font>
+                  <Font size="10.0" />
+               </font></Label>
+            <Label fx:id="confirmPassLabel" layoutX="69.0" layoutY="416.0" prefHeight="18.0" prefWidth="194.0" />
+            <Label fx:id="wrongLabel" alignment="CENTER" layoutX="35.0" layoutY="471.0" prefHeight="18.0" prefWidth="279.0" />
+            <PasswordField fx:id="confirmPassTextfield" layoutX="69.0" layoutY="388.0" prefHeight="20.0" prefWidth="210.0" promptText="Confirm Password" style="-fx-background-color: transparent; -fx-border-color: #0598ff; -fx-border-width: 0px 0px 2px 0px;" />
+         </children>
+      </AnchorPane>
+   </center>
+</BorderPane>
