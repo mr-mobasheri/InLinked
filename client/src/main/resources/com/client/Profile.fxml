@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ScrollPane hbarPolicy="NEVER" layoutY="81.0" prefHeight="642.0" prefWidth="900.0">
+         <content>
+            <VBox>
+               <children>
+                  <VBox fx:id="introductionVBox" prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <Label alignment="CENTER" prefHeight="44.0" prefWidth="926.0" style="-fx-background-color: #0598ff;" text="Introduction" textFill="WHITE">
+                           <padding>
+                              <Insets left="10.0" />
+                           </padding>
+                           <font>
+                              <Font name="MRT_Sima" size="28.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
+                  <VBox fx:id="educationVBox" prefHeight="200.0" prefWidth="900.0">
+                     <children>
+                        <Label alignment="CENTER" prefHeight="44.0" prefWidth="902.0" style="-fx-background-color: #0598ff;" text="Education" textFill="WHITE">
+                           <font>
+                              <Font name="MRT_Sima" size="28.0" />
+                           </font>
+                           <padding>
+                              <Insets left="10.0" />
+                           </padding>
+                        </Label>
+                     </children>
+                  </VBox>
+                  <VBox fx:id="skilsVBox" prefHeight="230.0" prefWidth="900.0">
+                     <children>
+                        <Label alignment="CENTER" prefHeight="44.0" prefWidth="903.0" style="-fx-background-color: #0598ff;" text="Skills" textFill="WHITE">
+                           <font>
+                              <Font name="MRT_Sima" size="28.0" />
+                           </font>
+                           <padding>
+                              <Insets left="10.0" />
+                           </padding>
+                        </Label>
+                     </children>
+                  </VBox>
+               </children></VBox>
+         </content>
+      </ScrollPane>
+      <ImageView fx:id="profileImageView" fitHeight="60.0" fitWidth="55.0" layoutX="16.0" layoutY="18.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@pictures/user.png" />
+         </image>
+      </ImageView>
+      <Label fx:id="usernameLabel" layoutX="82.0" layoutY="13.0" text="username">
+         <font>
+            <Font size="22.0" />
+         </font>
+      </Label>
+      <Label fx:id="nameLabel" layoutX="82.0" layoutY="39.0" text="name">
+         <font>
+            <Font size="22.0" />
+         </font>
+      </Label>
+      <Label layoutX="722.0" layoutY="30.0" text="Following">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

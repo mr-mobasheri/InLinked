@@ -2,15 +2,18 @@ package controllers;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dataAccess.UserDAO;
 import models.*;
 import utils.UserNotFoundException;
 
 public class UserController extends Controller {
+    UserDAO userDAO = new UserDAO();
 
     public UserController() {
     }
@@ -23,7 +26,7 @@ public class UserController extends Controller {
     }
 
     public String deleteUser(String username) throws UserNotFoundException {
-        User user = dao.getUserByUsername(username);
+        User user = userDAO.getUserByUsername(username);
         if (user == null) {
             throw new UserNotFoundException();
         }
@@ -33,7 +36,7 @@ public class UserController extends Controller {
 
     public void updateUser(String username, String password, String firstName, String lastName, String email,
                            String phoneNumber, String country, long birthday) {
-        User user = dao.getUserByUsername(username);
+        User user = userDAO.getUserByUsername(username);
         user.setPassword(password);
         user.setFirstName(firstName);
         user.setLastName(lastName);
@@ -45,19 +48,15 @@ public class UserController extends Controller {
     }
 
     public void deleteAllUsers() {
-        dao.deleteAllUsers();
-    }
-
-    public void deleteAllMessages() {
-        dao.deleteAllMessages();
+        userDAO.deleteAllUsers();
     }
 
     public boolean isUserExists(String username) {
-        return dao.isUserExists(username);
+        return userDAO.isUserExists(username);
     }
 
     public String getUsers() {
-        ArrayList<User> users = dao.getAllUsers();
+        ArrayList<User> users = userDAO.getAllUsers();
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             return objectMapper.writeValueAsString(users);
@@ -67,7 +66,7 @@ public class UserController extends Controller {
     }
 
     public String getUser(String username) {
-        User user = dao.getUserByUsername(username);
+        User user = userDAO.getUserByUsername(username);
         if (user == null)
             return "user not found!";
         ObjectMapper objectMapper = new ObjectMapper();
@@ -80,15 +79,22 @@ public class UserController extends Controller {
     }
 
     public String register(String email, String username, String firstName, String lastName, String password) {
-        if (email == null || username == null || firstName == null || lastName == null || password == null) {
+        if (email == null || username == null || firstName == null || lastName == null
+                || password == null || !isValidEmailAddress(email) || !isValidPass(password)) {
             return "400";
         }
 
-        if (dao.isUserExists(email)) {
+        for (char c : username.toCharArray()) {
+            if (!Character.isAlphabetic(c)) {
+                return "400";
+            }
+        }
+
+        if (userDAO.isUserExists(email)) {
             return "409";
         }
 
-        if(dao.isUsernameExists(username)) {
+        if (userDAO.isUsernameExists(username)) {
             return "406";
         }
 
@@ -107,11 +113,11 @@ public class UserController extends Controller {
         if (email == null || password == null) {
             return "400";
         }
-        User user = dao.getUserByEmail(email);
+        User user = userDAO.getUserByEmail(email);
         if (user != null && user.getPassword().equals(password)) {
             String token = JWT.create()
                     .withIssuer("auth0")
-                    .withSubject(email)
+                    .withSubject(user.getEmail())
                     .withExpiresAt(new Date(System.currentTimeMillis() + 3600 * 1000))
                     .sign(algorithm);
             return token;
@@ -119,4 +125,34 @@ public class UserController extends Controller {
             return "401";
         }
     }
+
+    public static boolean isValidEmailAddress(String email) {
+        String ePattern = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
+        java.util.regex.Matcher m = (java.util.regex.Pattern.compile(ePattern)).matcher(email);
+        return m.matches();
+    }
+
+    public static boolean isValidPass(String pass) {
+        boolean cap = false, small = false, digit = false;
+        for (char c : pass.toCharArray()) {
+            if (Character.isLowerCase(c))
+                small = true;
+            if (Character.isUpperCase(c))
+                cap = true;
+            if (Character.isDigit(c))
+                digit = true;
+        }
+        return cap && small && digit && pass.length() >= 8;
+    }
+
+    public String searchUser(String word) {
+        List<User> users = userDAO.searchUsers(word);
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.writeValueAsString(users);
+        } catch (JsonProcessingException e) {
+            return null;
+        }
+    }
+
 }

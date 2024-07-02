@@ -27,5 +27,6 @@
         <mapping class="models.User"/>
         <mapping class="models.Message"/>
         <mapping class="models.Post"/>
+        <mapping class="models.Follow"/>
     </session-factory>
 </hibernate-configuration>

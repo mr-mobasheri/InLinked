@@ -8,32 +8,27 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class LinkedinApplication extends Application {
-    private static Stage stage;
-    private static Scene login;
-    private static Scene signUp;
+    public static Stage stage;
     public static String token;
-
 
     @Override
     public void start(Stage stage) throws IOException {
         LinkedinApplication.stage = stage;
-        setScene();
         stage.setTitle("Linkedin");
-        stage.setScene(login);
+        stage.setScene(new Scene(
+                (new FXMLLoader(LinkedinApplication.class.getResource("login.fxml"))).load()));
+        stage.setResizable(false);
         stage.show();
     }
 
-    private void setScene() throws IOException {
-        login = new Scene(
-                (new FXMLLoader(LinkedinApplication.class.getResource("login.fxml"))).load());
-        signUp = new Scene(
-                (new FXMLLoader(LinkedinApplication.class.getResource("signUp.fxml"))).load());
-    }
-
-    public static void changeScene(SceneName sceneName) {
+    public static void changeScene(SceneName sceneName) throws IOException {
         switch (sceneName) {
-            case signUP -> stage.setScene(signUp);
-            case login -> stage.setScene(login);
+            case signUP -> stage.setScene(new Scene(
+                    (new FXMLLoader(LinkedinApplication.class.getResource("signUp.fxml"))).load()));
+            case login -> stage.setScene(new Scene(
+                    (new FXMLLoader(LinkedinApplication.class.getResource("login.fxml"))).load()));
+            case home -> stage.setScene(new Scene(
+                    (new FXMLLoader(LinkedinApplication.class.getResource("home.fxml"))).load()));
         }
     }
 

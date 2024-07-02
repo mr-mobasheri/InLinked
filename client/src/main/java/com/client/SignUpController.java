@@ -1,22 +1,20 @@
 package com.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,9 +33,6 @@ public class SignUpController {
     private TextField emailTextfield;
 
     @FXML
-    private FontAwesomeIcon exit;
-
-    @FXML
     private Label firstnameLabel;
 
     @FXML
@@ -54,9 +49,6 @@ public class SignUpController {
 
     @FXML
     private PasswordField passTextfield;
-
-    @FXML
-    private Button signUpButton;
 
     @FXML
     private Label usernameLabel;
@@ -136,8 +128,24 @@ public class SignUpController {
     }
 
     @FXML
-    void exitPressed(MouseEvent event) {
-        LinkedinApplication.changeScene(SceneName.login);
+    void signInButtonPressed(ActionEvent event) {
+        clean();
+        try {
+            LinkedinApplication.changeScene(SceneName.login);
+        } catch (IOException e) {
+            e.printStackTrace();
+            wrongLabel.setText("internal error");
+        }
+    }
+
+    private void clean() {
+        emailLabel.setText("");
+        usernameLabel.setText("");
+        firstnameLabel.setText("");
+        lastnameLabel.setText("");
+        passLabel.setText("");
+        confirmPassLabel.setText("");
+        wrongLabel.setText("");
     }
 
     private boolean check() {
@@ -158,6 +166,7 @@ public class SignUpController {
             for (char c : usernameTextfield.getText().toCharArray()) {
                 if(!Character.isAlphabetic(c)) {
                     usernameLabel.setText("username can only contain letters");
+                    break;
                 }
             }
         }
@@ -219,17 +228,21 @@ public class SignUpController {
                 usernameLabel.setText("username is already taken");
             } else if (con.getResponseCode() == 409) {
                 emailLabel.setText("this email is already registered");
-            } else {
+            } else if(con.getResponseCode() == 200){
                 StringBuilder response = new StringBuilder();
                 try (BufferedReader br = new BufferedReader(
-                        new InputStreamReader(con.getInputStream(), "utf-8"))) {
+                        new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8))) {
                     String responseLine = null;
                     while ((responseLine = br.readLine()) != null) {
                         response.append(responseLine.trim());
                     }
                 }
                 LinkedinApplication.token = response.toString();
-                wrongLabel.setText("signed Up!");
+                clean();
+                LinkedinApplication.changeScene(SceneName.home);
+            }
+            else {
+                wrongLabel.setText("server error");
             }
         } catch (Exception e) {
             e.printStackTrace();

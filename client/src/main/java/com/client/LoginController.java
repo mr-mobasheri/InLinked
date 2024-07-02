@@ -4,7 +4,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
@@ -14,14 +13,13 @@ import javafx.scene.control.TextField;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javafx.scene.text.TextAlignment;
 
 public class LoginController {
 
@@ -62,7 +60,7 @@ public class LoginController {
         passTextfield.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
-                if(!t1.isEmpty()) {
+                if (!t1.isEmpty()) {
                     passLabel.setText("");
                 }
             }
@@ -77,7 +75,19 @@ public class LoginController {
 
     @FXML
     void joinNowHyperlinkPressed(ActionEvent event) {
-        LinkedinApplication.changeScene(SceneName.signUP);
+        clean();
+        try {
+            LinkedinApplication.changeScene(SceneName.signUP);
+        } catch (IOException e) {
+            e.printStackTrace();
+            wrongLabel.setText("internal error");
+        }
+    }
+
+    private void clean() {
+        emailLabel.setText("");
+        passLabel.setText("");
+        wrongLabel.setText("");
     }
 
     @FXML
@@ -93,6 +103,7 @@ public class LoginController {
             emailLabel.setText("Email is invalid");
         } else {
             try {
+                wrongLabel.setText("wait...");
                 URL url = new URL("http://localhost:8081/auth/login");
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
                 con.setRequestMethod("POST");
@@ -102,23 +113,25 @@ public class LoginController {
                 credentials.put("email", emailTextfield.getText());
                 credentials.put("password", passTextfield.getText());
                 con.getOutputStream().write(objectMapper.writeValueAsString(credentials).getBytes());
-                if(con.getResponseCode() == 401) {
+                if (con.getResponseCode() == 401) {
                     wrongLabel.setText("email or password is incorrect");
-                }
-                else {
+                } else if (con.getResponseCode() == 200) {
                     StringBuilder response = new StringBuilder();
                     try (BufferedReader br = new BufferedReader(
-                            new InputStreamReader(con.getInputStream(), "utf-8"))) {
+                            new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8))) {
                         String responseLine = null;
                         while ((responseLine = br.readLine()) != null) {
                             response.append(responseLine.trim());
                         }
                     }
                     LinkedinApplication.token = response.toString();
-                    wrongLabel.setText("signed in!");
+                    clean();
+                    LinkedinApplication.changeScene(SceneName.home);
+                } else {
+                    wrongLabel.setText("server error");
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
+                e.printStackTrace();
                 wrongLabel.setText("connection failed");
             }
         }

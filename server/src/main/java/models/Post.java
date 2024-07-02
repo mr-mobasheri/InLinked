@@ -20,23 +20,28 @@ public class Post extends Model {
     private String text;
     @ElementCollection
     @CollectionTable(joinColumns = @JoinColumn)
-    private List<String> mediaPaths;
-    private int likes;
-    private Date dateOfCreat;
+    private List<String> mediaPaths = new ArrayList<>();
 
-    public Post(User sender, String text, Date dateOfCreat) {
+    @ElementCollection
+    @CollectionTable(joinColumns = @JoinColumn)
+    private List<String> comments = new ArrayList<>();
+
+    @ElementCollection
+    @CollectionTable(joinColumns = @JoinColumn)
+    private List<String> likerUsername = new ArrayList<>();
+
+    private long dateOfCreat;
+
+    public Post(User sender, String text, long dateOfCreat) {
         this.sender = sender;
         this.text = text;
         this.dateOfCreat = dateOfCreat;
-        this.likes = 0;
-        mediaPaths = new ArrayList<String>();
     }
 
     public Post(User sender, String text) {
         this.sender = sender;
         this.text = text;
-        this.dateOfCreat = new Date(System.currentTimeMillis());
-        this.likes = 0;
+        this.dateOfCreat = System.currentTimeMillis();
         mediaPaths = new ArrayList<String>();
     }
 
@@ -58,10 +63,6 @@ public class Post extends Model {
         return mediaPaths;
     }
 
-    public int getLikes() {
-        return likes;
-    }
-
     public void setSender(User sender) {
         this.sender = sender;
     }
@@ -74,15 +75,15 @@ public class Post extends Model {
         this.mediaPaths = mediaPaths;
     }
 
-    public void setLikes(int likes) {
-        this.likes = likes;
+    public List<String> getComments() {
+        return comments;
     }
 
-    public void setDateOfCreat(Date dateOfCreat) {
-        this.dateOfCreat = dateOfCreat;
+    public List<String> getLikerUsername() {
+        return likerUsername;
     }
 
-    public Date getDateOfCreat() {
+    public long getDateOfCreat() {
         return dateOfCreat;
     }
 

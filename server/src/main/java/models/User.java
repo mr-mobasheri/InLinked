@@ -9,7 +9,7 @@ import java.util.List;
 import javax.persistence.*;
 
 @Entity
-@Table(uniqueConstraints = {
+@Table(name = "user", uniqueConstraints = {
         @UniqueConstraint(columnNames = "username"),
         @UniqueConstraint(columnNames = "email")
 })
@@ -28,16 +28,17 @@ public class User extends Model implements Serializable {
     private String country;
     private long birthday;
     private long dateOfCreat;
+    private String profilePath;
 
     @JsonIgnore
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
-    private List<Message> sentMessages;
+    private List<Message> sentMessages = new ArrayList<>();
     @JsonIgnore
     @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL)
-    private List<Message> receivedMessages;
+    private List<Message> receivedMessages = new ArrayList<>();
     @JsonIgnore
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
-    private List<Post> posts;
+    private List<Post> posts = new ArrayList<>();
 
     public User() {
     }
@@ -53,9 +54,6 @@ public class User extends Model implements Serializable {
         this.country = country;
         this.birthday = birthday;
         this.dateOfCreat = System.currentTimeMillis();
-        sentMessages = new ArrayList<>();
-        receivedMessages = new ArrayList<>();
-        posts = new ArrayList<>();
     }
 
     public String getUsername() {
@@ -152,6 +150,14 @@ public class User extends Model implements Serializable {
 
     public void setSentMessages(List<Message> sentMessages) {
         this.sentMessages = sentMessages;
+    }
+
+    public void setProfilePath(String profilePath) {
+        this.profilePath = profilePath;
+    }
+
+    public String getProfilePath() {
+        return profilePath;
     }
 }
 
