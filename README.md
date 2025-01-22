@@ -1,5 +1,5 @@
 # InLinked
-
+[MIT License](LICENSE)
 ## About
 **InLinked** is a LinkedIn-clone networking platform developed in **Java** using **JavaFX** for the user interface. The project is structured with the **MVC (Model-View-Controller)** and **DAO (Data Access Object)** design patterns.
 
