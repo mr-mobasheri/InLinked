@@ -46,12 +46,12 @@ This project was created as part of the **Advanced Programming (AP)** course at 
 
 ## Screenshots
 ### Sign In Page
-![Sign In Page](document/sign-in.png)  
+![Sign In Page](documents/sign-in.png)  
 
 ### Home Page
-![Home Page](document/home.png)  
+![Home Page](documents/home.png)  
 
 ### Profile Page
-![Profile Page](document/profile.png)  
+![Profile Page](documents/profile.png)  
 
 ---
