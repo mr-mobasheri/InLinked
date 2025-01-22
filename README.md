@@ -46,15 +46,12 @@ This project was created as part of the **Advanced Programming (AP)** course at 
 
 ## Screenshots
 ### Sign In Page
-![Sign In Page](path/to/sign-in.png)  
-The sign-in page enables users to log in securely to their accounts.
+![Sign In Page](document/sign-in.png)  
 
 ### Home Page
-![Home Page](path/to/home.png)  
-The home page displays the feed where users can view posts from their network.
+![Home Page](document/home.png)  
 
 ### Profile Page
-![Profile Page](path/to/profile.png)  
-The profile page allows users to showcase their professional information and activity.
+![Profile Page](document/profile.png)  
 
 ---
