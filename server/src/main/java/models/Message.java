@@ -15,14 +15,9 @@ public class Message extends Model implements Serializable {
 
     private String text;
     private long dateOfCreat;
-
-    @ManyToOne()
-    @JoinColumn(referencedColumnName = "username")
-    private User sender;
-
-    @ManyToOne()
-    @JoinColumn(referencedColumnName = "username")
-    private User receiver;
+    private String filePath;
+    private String sender;
+    private String receiver;
 
     public Message(String text) {
         this.text = text;
@@ -34,12 +29,34 @@ public class Message extends Model implements Serializable {
     public Message(String text, User sender, User receiver) {
         this.text = text;
         this.dateOfCreat = System.currentTimeMillis();
-        this.sender = sender;
-        this.receiver = receiver;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
+    public String getFilePath() {
+        return filePath;
     }
 
     public String getText() {
         return text;
+    }
+
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
+
+    public void setReceiver(String receiver) {
+        this.receiver = receiver;
+    }
+
+    public String getSender() {
+        return sender;
+    }
+
+    public String getReceiver() {
+        return receiver;
     }
 
     public int getId() {
@@ -61,21 +78,4 @@ public class Message extends Model implements Serializable {
     public void setText(String text) {
         this.text = text;
     }
-
-    public User getSender() {
-        return sender;
-    }
-
-    public void setSender(User sender) {
-        this.sender = sender;
-    }
-
-    public User getReceiver() {
-        return receiver;
-    }
-
-    public void setReceiver(User receiver) {
-        this.receiver = receiver;
-    }
-
 }

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="680.0" prefWidth="900.0" style="-fx-background-color: #00ffff;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <AnchorPane layoutX="-6.0" prefHeight="680.0" prefWidth="88.0" style="-fx-background-color: #0028ff;">
+         <children>
+            <FontAwesomeIcon fill="WHITE" glyphName="USER" layoutX="31.0" layoutY="407.0" size="35" text="" />
+            <FontAwesomeIcon fill="WHITE" glyphName="USERS" layoutX="25.0" layoutY="281.0" size="35" text="" />
+            <ImageView fitHeight="64.0" fitWidth="53.0" layoutX="17.0" layoutY="492.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@pictures/setting.png" />
+               </image>
+            </ImageView>
+            <ImageView fitHeight="48.0" fitWidth="38.0" layoutX="26.0" layoutY="126.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@pictures/chat.jpg" />
+               </image>
+            </ImageView>
+         </children>
+      </AnchorPane>
+      <AnchorPane layoutX="82.0" prefHeight="680.0" prefWidth="255.0" style="-fx-background-color: #017bfe;">
+         <children>
+            <HBox layoutX="8.0" layoutY="14.0" prefHeight="35.0" prefWidth="238.0" style="-fx-background-color: #001ffd; -fx-background-radius: 100px;">
+               <children>
+                  <FontAwesomeIcon glyphName="SEARCH" size="20">
+                     <HBox.margin>
+                        <Insets left="10.0" top="6.0" />
+                     </HBox.margin>
+                  </FontAwesomeIcon>
+                  <TextField prefHeight="25.0" prefWidth="241.0" promptText="Search" style="-fx-background-color: transparent;">
+                     <HBox.margin>
+                        <Insets left="5.0" top="5.0" />
+                     </HBox.margin>
+                  </TextField>
+               </children>
+            </HBox>
+            <VBox layoutY="63.0" prefHeight="616.0" prefWidth="255.0" />
+         </children>
+      </AnchorPane>
+      <HBox layoutX="337.0" prefHeight="58.0" prefWidth="563.0" style="-fx-background-color: #fdff01;">
+         <children>
+            <ImageView fitHeight="47.0" fitWidth="77.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@pictures/user.png" />
+               </image>
+               <HBox.margin>
+                  <Insets left="10.0" top="5.0" />
+               </HBox.margin>
+            </ImageView>
+            <Label prefHeight="35.0" prefWidth="209.0" text="Name ">
+               <HBox.margin>
+                  <Insets left="10.0" top="10.0" />
+               </HBox.margin>
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" layoutX="339.0" layoutY="633.0" prefHeight="46.0" prefWidth="563.0" style="-fx-background-color: white;">
+         <children>
+            <TextField prefHeight="38.0" prefWidth="482.0" promptText="Type something to send ..." style="-fx-background-color: transparent; -fx-border-color: blue;" />
+            <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="38.0" style="-fx-background-color: white;">
+               <graphic>
+                  <ImageView fitHeight="23.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@pictures/file.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="38.0" style="-fx-background-color: white;">
+               <graphic>
+                  <ImageView fitHeight="28.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@pictures/send.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+         </children>
+      </HBox>
+      <ScrollPane layoutX="339.0" layoutY="58.0" prefHeight="573.0" prefWidth="563.0">
+         <content>
+            <VBox prefHeight="570.0" prefWidth="558.0" style="-fx-background-color: #00ffff;" />
+         </content>
+      </ScrollPane>
+   </children>
+</AnchorPane>

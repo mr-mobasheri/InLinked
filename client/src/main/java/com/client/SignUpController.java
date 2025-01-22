@@ -9,9 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -131,7 +129,7 @@ public class SignUpController {
     void signInButtonPressed(ActionEvent event) {
         clean();
         try {
-            LinkedinApplication.changeScene(SceneName.login);
+            InLinkedApplication.changeScene(SceneName.login);
         } catch (IOException e) {
             e.printStackTrace();
             wrongLabel.setText("internal error");
@@ -162,14 +160,7 @@ public class SignUpController {
             usernameLabel.setText("enter your username");
             check = false;
         }
-        else {
-            for (char c : usernameTextfield.getText().toCharArray()) {
-                if(!Character.isAlphabetic(c)) {
-                    usernameLabel.setText("username can only contain letters");
-                    break;
-                }
-            }
-        }
+
         if(firstnameTextfield.getText().isEmpty()) {
             firstnameLabel.setText("enter your firstname");
             check = false;
@@ -237,9 +228,14 @@ public class SignUpController {
                         response.append(responseLine.trim());
                     }
                 }
-                LinkedinApplication.token = response.toString();
+                InLinkedApplication.token = response.toString();
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter("src/main/resources/com/client/token.txt"))) {
+                    writer.write(response.toString());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 clean();
-                LinkedinApplication.changeScene(SceneName.home);
+                InLinkedApplication.changeScene(SceneName.home);
             }
             else {
                 wrongLabel.setText("server error");

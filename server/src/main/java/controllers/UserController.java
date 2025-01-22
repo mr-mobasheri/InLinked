@@ -18,13 +18,6 @@ public class UserController extends Controller {
     public UserController() {
     }
 
-    public String createUser(String username, String password, String firstName, String lastName, String email,
-                             String phoneNumber, String country, long birthday) {
-        User user = new User(username, password, firstName, lastName, email, phoneNumber, country, birthday);
-        dao.insert(user);
-        return "User created successfully";
-    }
-
     public String deleteUser(String username) throws UserNotFoundException {
         User user = userDAO.getUserByUsername(username);
         if (user == null) {
@@ -35,7 +28,7 @@ public class UserController extends Controller {
     }
 
     public void updateUser(String username, String password, String firstName, String lastName, String email,
-                           String phoneNumber, String country, long birthday) {
+                           String phoneNumber, String country) {
         User user = userDAO.getUserByUsername(username);
         user.setPassword(password);
         user.setFirstName(firstName);
@@ -43,7 +36,6 @@ public class UserController extends Controller {
         user.setUsername(email);
         user.setPhoneNumber(phoneNumber);
         user.setCountry(country);
-        user.setBirthday(birthday);
         dao.update(user);
     }
 
@@ -117,7 +109,7 @@ public class UserController extends Controller {
         if (user != null && user.getPassword().equals(password)) {
             String token = JWT.create()
                     .withIssuer("auth0")
-                    .withSubject(user.getEmail())
+                    .withSubject(user.getUsername())
                     .withExpiresAt(new Date(System.currentTimeMillis() + 3600 * 1000))
                     .sign(algorithm);
             return token;
@@ -145,8 +137,8 @@ public class UserController extends Controller {
         return cap && small && digit && pass.length() >= 8;
     }
 
-    public String searchUser(String word) {
-        List<User> users = userDAO.searchUsers(word);
+    public String searchUser(String word, String searcherUsername) {
+        List<User> users = userDAO.searchUsers(word, searcherUsername);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             return objectMapper.writeValueAsString(users);
@@ -155,4 +147,9 @@ public class UserController extends Controller {
         }
     }
 
+    public void  updateImage(String username, String imagePath) {
+        User user = userDAO.getUserByUsername(username);
+        user.setProfilePath(imagePath);
+        userDAO.update(user);
+    }
 }

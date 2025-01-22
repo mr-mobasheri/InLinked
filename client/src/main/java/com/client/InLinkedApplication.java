@@ -8,23 +8,23 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class LinkBoardApplication extends Application {
+public class InLinkedApplication extends Application {
     public static Stage stage;
     public static String token;
 
     @Override
     public void start(Stage stage) {
-        LinkBoardApplication.stage = stage;
-        stage.setTitle("LinkBoard");
+        InLinkedApplication.stage = stage;
+        stage.setTitle("InLinked");
         try (BufferedReader reader = new BufferedReader(new FileReader("client/src/main/resources/com/client/token.txt"))) {
             String line = reader.readLine();
             if (line == null) {
                 stage.setScene(new Scene(
-                        (new FXMLLoader(LinkBoardApplication.class.getResource("login.fxml"))).load()));
+                        (new FXMLLoader(InLinkedApplication.class.getResource("login.fxml"))).load()));
             } else {
                 token = line;
                 stage.setScene(new Scene(
-                        (new FXMLLoader(LinkBoardApplication.class.getResource("home.fxml"))).load()));
+                        (new FXMLLoader(InLinkedApplication.class.getResource("home.fxml"))).load()));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -36,13 +36,13 @@ public class LinkBoardApplication extends Application {
     public static void changeScene(SceneName sceneName) throws IOException {
         switch (sceneName) {
             case signUP -> stage.setScene(new Scene(
-                    (new FXMLLoader(LinkBoardApplication.class.getResource("signUp.fxml"))).load()));
+                    (new FXMLLoader(InLinkedApplication.class.getResource("signUp.fxml"))).load()));
             case login -> {
                 stage.setScene(new Scene(
-                        (new FXMLLoader(LinkBoardApplication.class.getResource("login.fxml"))).load()));
+                        (new FXMLLoader(InLinkedApplication.class.getResource("login.fxml"))).load()));
             }
             case home -> stage.setScene(new Scene(
-                    (new FXMLLoader(LinkBoardApplication.class.getResource("home.fxml"))).load()));
+                    (new FXMLLoader(InLinkedApplication.class.getResource("home.fxml"))).load()));
         }
     }
 

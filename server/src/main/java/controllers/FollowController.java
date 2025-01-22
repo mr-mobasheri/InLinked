@@ -29,7 +29,7 @@ public class FollowController extends Controller {
     }
 
     public String getFollower(String username) {
-        List<User> users = followDAO.getFollowings(username);
+        List<User> users = followDAO.getFollowers(username);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             return objectMapper.writeValueAsString(users);

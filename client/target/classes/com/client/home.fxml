@@ -9,11 +9,18 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.client.HomeController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="910.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.client.HomeController">
    <children>
       <AnchorPane maxWidth="900.0" prefHeight="63.0" prefWidth="900.0">
          <children>
-            <Button layoutX="314.0" layoutY="5.0" mnemonicParsing="false" onAction="#myNetworkButtonPressed" prefHeight="48.0" prefWidth="57.0" style="-fx-background-color: transparent;" />
+            <Button layoutX="314.0" layoutY="-1.0" mnemonicParsing="false" onAction="#myNetworkButtonPressed" prefHeight="48.0" prefWidth="57.0" style="-fx-background-color: transparent;">
+               <graphic>
+                  <ImageView fitHeight="30.0" fitWidth="52.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@pictures/searchpost.png" />
+                     </image>
+                  </ImageView>
+               </graphic></Button>
             <Button layoutX="526.0" layoutY="3.0" mnemonicParsing="false" onAction="#jobsButtonPressed" prefHeight="48.0" prefWidth="52.0" style="-fx-background-color: transparent;" />
             <Button layoutX="751.0" layoutY="4.0" mnemonicParsing="false" onAction="#notifButtonPressed" prefHeight="34.0" prefWidth="46.0" style="-fx-background-color: transparent;">
                <graphic>
@@ -28,7 +35,7 @@
                <graphic>
                   <ImageView fitHeight="33.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@pictures/messages.png" />
+                        <Image url="@pictures/Messaging.jpg" />
                      </image>
                   </ImageView>
                </graphic>
@@ -48,7 +55,7 @@
             </Button>
             <Text layoutX="120.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Search" />
             <Text layoutX="216.0" layoutY="52.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Home" />
-            <Text layoutX="310.0" layoutY="51.0" strokeType="OUTSIDE" strokeWidth="0.0" text="My Network" />
+            <Text layoutX="313.0" layoutY="54.0" strokeType="OUTSIDE" strokeWidth="0.0" text="search Post" />
             <Text layoutX="442.0" layoutY="51.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Post" />
             <Text layoutX="537.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Jobs" />
             <Text layoutX="628.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Messaging" />
@@ -58,18 +65,13 @@
             <FontAwesomeIcon fill="#285cc4" glyphName="HOME" layoutX="217.0" layoutY="34.0" size="33" text="" />
             <Button layoutX="841.0" layoutY="3.0" mnemonicParsing="false" onAction="#meButtonPressed" prefHeight="34.0" prefWidth="46.0" style="-fx-background-color: transparent;">
                <graphic>
-                  <ImageView fitHeight="30.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="profileImageview" fitHeight="30.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@pictures/user.png" />
                      </image>
                   </ImageView>
                </graphic>
             </Button>
-            <ImageView fitHeight="30.0" fitWidth="52.0" layoutX="319.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@pictures/network.png" />
-               </image>
-            </ImageView>
             <Button layoutX="119.0" layoutY="7.0" mnemonicParsing="false" onAction="#searchButtonPressed" prefHeight="48.0" prefWidth="36.0" style="-fx-background-color: transparent;" />
             <ImageView fitHeight="32.0" fitWidth="30.0" layoutX="534.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -79,7 +81,7 @@
             <Button layoutX="211.0" layoutY="9.0" mnemonicParsing="false" onAction="#homeButtonPressed" prefHeight="48.0" prefWidth="42.0" style="-fx-opacity: 0;" />
          </children>
       </AnchorPane>
-      <ScrollPane hbarPolicy="NEVER" layoutX="-1.0" layoutY="59.0" prefHeight="642.0" prefWidth="900.0">
+      <ScrollPane hbarPolicy="NEVER" layoutX="-1.0" layoutY="59.0" prefHeight="642.0" prefWidth="910.0">
          <content>
             <VBox fx:id="homeVbox" alignment="TOP_CENTER" prefWidth="900.0" />
          </content>

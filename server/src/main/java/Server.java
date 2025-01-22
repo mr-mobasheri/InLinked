@@ -9,8 +9,6 @@ public class Server {
     public static void main(String[] args) {
         try {
             HttpServer server = HttpServer.create(new InetSocketAddress(8081), 0);
-            server.createContext("/users", new UserHandler());
-            server.createContext("/messages", new MessageHandler());
             server.createContext("/auth", new AuthHandler());
             HttpContext homeContext = server.createContext("/home", new HomeHandler());
             homeContext.getFilters().add(new JwtFilter());
@@ -21,6 +19,5 @@ public class Server {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-
     }
 }

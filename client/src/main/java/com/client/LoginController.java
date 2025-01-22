@@ -10,12 +10,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -77,7 +74,7 @@ public class LoginController {
     void joinNowHyperlinkPressed(ActionEvent event) {
         clean();
         try {
-            LinkedinApplication.changeScene(SceneName.signUP);
+            InLinkedApplication.changeScene(SceneName.signUP);
         } catch (IOException e) {
             e.printStackTrace();
             wrongLabel.setText("internal error");
@@ -124,11 +121,17 @@ public class LoginController {
                             response.append(responseLine.trim());
                         }
                     }
-                    LinkedinApplication.token = response.toString();
+                    InLinkedApplication.token = response.toString();
                     clean();
-                    LinkedinApplication.changeScene(SceneName.home);
+                    try (BufferedWriter writer = new BufferedWriter(new FileWriter("client/src/main/resources/com/client/token.txt"))) {
+                        writer.write(response.toString());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    InLinkedApplication.changeScene(SceneName.home);
                 } else {
                     wrongLabel.setText("server error");
+                    System.out.println(con.getResponseCode());
                 }
             } catch (Exception e) {
                 e.printStackTrace();

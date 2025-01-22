@@ -8,8 +8,9 @@ public class Message implements Serializable {
 
     private String text;
     private long dateOfCreat;
-    private User sender;
-    private User receiver;
+    private String sender;
+    private String receiver;
+    private String filePath;
 
     public Message(String text) {
         this.text = text;
@@ -21,8 +22,14 @@ public class Message implements Serializable {
     public Message(String text, User sender, User receiver) {
         this.text = text;
         this.dateOfCreat = System.currentTimeMillis();
-        this.sender = sender;
-        this.receiver = receiver;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
+    public String getFilePath() {
+        return filePath;
     }
 
     public String getText() {
@@ -49,20 +56,19 @@ public class Message implements Serializable {
         this.text = text;
     }
 
-    public User getSender() {
-        return sender;
-    }
-
-    public void setSender(User sender) {
+    public void setSender(String sender) {
         this.sender = sender;
     }
 
-    public User getReceiver() {
-        return receiver;
-    }
-
-    public void setReceiver(User receiver) {
+    public void setReceiver(String receiver) {
         this.receiver = receiver;
     }
 
+    public String getSender() {
+        return sender;
+    }
+
+    public String getReceiver() {
+        return receiver;
+    }
 }

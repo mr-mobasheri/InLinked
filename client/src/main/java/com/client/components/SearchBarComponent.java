@@ -1,21 +1,9 @@
 package com.client.components;
 
-import com.client.LinkedinApplication;
-import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Font;
-import javafx.stage.Stage;
-
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
 
 public class SearchBarComponent extends AnchorPane {
     public TextField searchTextfield;
@@ -45,12 +33,6 @@ public class SearchBarComponent extends AnchorPane {
         searchButton.setStyle("-fx-background-color: #0598ff;");
         searchButton.setTextFill(javafx.scene.paint.Color.WHITE);
         searchButton.setFont(new Font(20.0));
-        searchButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-
-            }
-        });
 
         this.getChildren().addAll(searchTextfield, searchButton);
     }

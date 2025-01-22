@@ -6,15 +6,15 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 
 import java.nio.file.Path;
 
 public class SearchResultComponent extends AnchorPane {
-    ImageView profileImageView;
-    Label usernameLabel;
-    Label nameLabel;
-    //    Label followingLabel;
+    public ImageView profileImageView;
+    public Label usernameLabel;
+    public Label nameLabel;
     public Button userButton;
 
     public SearchResultComponent(User user) {
@@ -31,6 +31,7 @@ public class SearchResultComponent extends AnchorPane {
         profileImageView.setLayoutY(10);
         profileImageView.setPickOnBounds(true);
         profileImageView.setPreserveRatio(true);
+        profileImageView.setClip(new Circle(16, 16, 45));
 
         usernameLabel = new Label(user.getUsername());
         usernameLabel.setLayoutX(181);
@@ -41,11 +42,6 @@ public class SearchResultComponent extends AnchorPane {
         nameLabel.setLayoutX(181);
         nameLabel.setLayoutY(31);
         nameLabel.setFont(new Font(22));
-
-//        followingLabel = new Label("Following");
-//        followingLabel.setLayoutX(731);
-//        followingLabel.setLayoutY(16);
-//        followingLabel.setFont(new Font(20));
 
         userButton = new Button();
         userButton.setLayoutY(1);

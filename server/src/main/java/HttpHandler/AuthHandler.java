@@ -27,7 +27,6 @@ public class AuthHandler implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
         String path = exchange.getRequestURI().getPath();
         String method = exchange.getRequestMethod();
-        String response = "";
         reader = new BufferedReader(new InputStreamReader(exchange.getRequestBody(), StandardCharsets.UTF_8));
         if (method.equals("POST")) {
             if ("/auth/register".equals(path)) {
@@ -95,6 +94,7 @@ public class AuthHandler implements HttpHandler {
                 sendResponse(exchange, response, 200);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             sendResponse(exchange, "Internal server error", 500);
         }
     }

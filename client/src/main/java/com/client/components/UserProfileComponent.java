@@ -1,6 +1,6 @@
 package com.client.components;
 
-import com.client.LinkedinApplication;
+import com.client.InLinkedApplication;
 import com.client.models.User;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,14 +14,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -29,7 +28,6 @@ import java.util.List;
 
 public class UserProfileComponent extends AnchorPane {
     User user;
-    String viewerUsername;
     VBox contentVBox;
     VBox introductionVBox;
     Label introductionLabel;
@@ -41,6 +39,7 @@ public class UserProfileComponent extends AnchorPane {
     Label usernameLabel;
     Label nameLabel;
     Button followButton;
+    Button connectButton;
 
     public UserProfileComponent(User user) {
         this.user = user;
@@ -95,6 +94,7 @@ public class UserProfileComponent extends AnchorPane {
         profileImageView.setLayoutY(18);
         profileImageView.setPickOnBounds(true);
         profileImageView.setPreserveRatio(true);
+        profileImageView.setClip(new Circle(16, 16, 45));
 
         usernameLabel = new Label("username");
         usernameLabel.setLayoutX(82);
@@ -110,7 +110,7 @@ public class UserProfileComponent extends AnchorPane {
         try {
             URL url = new URL("http://localhost:8081/home/followers");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestProperty("Authorization", "Bearer " + LinkedinApplication.token);
+            con.setRequestProperty("Authorization", "Bearer " + InLinkedApplication.token);
             con.setRequestMethod("GET");
             if (con.getResponseCode() == 200) {
                 StringBuilder response = new StringBuilder();
@@ -135,8 +135,7 @@ public class UserProfileComponent extends AnchorPane {
                 if (check) {
                     followButton.setText("follow");
                 }
-            }
-            else {
+            } else {
                 followButton.setText("server error");
             }
         } catch (IOException e) {
@@ -152,11 +151,11 @@ public class UserProfileComponent extends AnchorPane {
         followButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                if(followButton.getText().equals("follow")) {
+                if (followButton.getText().equals("follow")) {
                     try {
                         URL url = new URL("http://localhost:8081/home/follow/" + user.getUsername());
                         HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                        con.setRequestProperty("Authorization", "Bearer " + LinkedinApplication.token);
+                        con.setRequestProperty("Authorization", "Bearer " + InLinkedApplication.token);
                         con.setRequestMethod("GET");
                         if (con.getResponseCode() == 200) {
                             StringBuilder response = new StringBuilder();
@@ -167,25 +166,22 @@ public class UserProfileComponent extends AnchorPane {
                                     response.append(responseLine.trim());
                                 }
                             }
-                            if(response.toString().equals("followed")) {
+                            if (response.toString().equals("followed")) {
                                 followButton.setText("unfollow");
-                            }
-                            else {
+                            } else {
                                 followButton.setText(response.toString());
                             }
-                        }
-                        else {
+                        } else {
                             followButton.setText("server error");
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                }
-                else if(followButton.getText().equals("unfollow")) {
+                } else if (followButton.getText().equals("unfollow")) {
                     try {
                         URL url = new URL("http://localhost:8081/home/unfollow/" + user.getUsername());
                         HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                        con.setRequestProperty("Authorization", "Bearer " + LinkedinApplication.token);
+                        con.setRequestProperty("Authorization", "Bearer " + InLinkedApplication.token);
                         con.setRequestMethod("GET");
                         if (con.getResponseCode() == 200) {
                             StringBuilder response = new StringBuilder();
@@ -196,14 +192,12 @@ public class UserProfileComponent extends AnchorPane {
                                     response.append(responseLine.trim());
                                 }
                             }
-                            if(response.toString().equals("unfollowed")) {
+                            if (response.toString().equals("unfollowed")) {
                                 followButton.setText("follow");
-                            }
-                            else {
+                            } else {
                                 followButton.setText(response.toString());
                             }
-                        }
-                        else {
+                        } else {
                             followButton.setText("server error");
                         }
                     } catch (IOException e) {
@@ -213,7 +207,96 @@ public class UserProfileComponent extends AnchorPane {
             }
         });
 
-        this.getChildren().addAll(profileImageView, usernameLabel, nameLabel, followButton, contentVBox);
+        connectButton = new Button();
+        try {
+            URL url = new URL("http://localhost:8081/home/connect/isConnected/" + user.getUsername());
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestProperty("Authorization", "Bearer " + InLinkedApplication.token);
+            con.setRequestMethod("GET");
+            if (con.getResponseCode() == 200) {
+                StringBuilder response = new StringBuilder();
+                try (BufferedReader br = new BufferedReader(
+                        new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8))) {
+                    String responseLine = null;
+                    while ((responseLine = br.readLine()) != null) {
+                        response.append(responseLine.trim());
+                    }
+                }
+                switch (response.toString()) {
+                    case "no":
+                        connectButton.setText("connect");
+                        break;
+                    case "yes":
+                        connectButton.setText("disconnect");
+                        break;
+                    default:
+                        connectButton.setText(response.toString());
+                }
+            } else {
+                System.out.println(con.getResponseCode());
+                connectButton.setText("server error");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        connectButton.setLayoutX(590);
+        connectButton.setLayoutY(25);
+        connectButton.setPrefHeight(32.0);
+        connectButton.setPrefWidth(120);
+        connectButton.setStyle("-fx-background-color: #0598ff;");
+        connectButton.setTextFill(javafx.scene.paint.Color.WHITE);
+        connectButton.setFont(new Font(20));
+        connectButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                if (connectButton.getText().equals("connect")) {
+                    try {
+                        URL url = new URL("http://localhost:8081/home/connect/request/" + user.getUsername());
+                        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                        con.setRequestProperty("Authorization", "Bearer " + InLinkedApplication.token);
+                        con.setRequestMethod("GET");
+                        if (con.getResponseCode() == 200) {
+                            connectButton.setText("requested");
+                        } else {
+                            connectButton.setText("server error");
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else if (connectButton.getText().equals("disconnect")) {
+                    try {
+                        URL url = new URL("http://localhost:8081/home/disconnect/" + user.getUsername());
+                        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                        con.setRequestProperty("Authorization", "Bearer " + InLinkedApplication.token);
+                        con.setRequestMethod("GET");
+                        if (con.getResponseCode() == 200) {
+                            connectButton.setText("connect");
+                        } else {
+                            connectButton.setText("server error");
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else if (connectButton.getText().equals("requested")) {
+                    try {
+                        URL url = new URL("http://localhost:8081/home/connect/deleteRequest/" + user.getUsername());
+                        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                        con.setRequestProperty("Authorization", "Bearer " + InLinkedApplication.token);
+                        con.setRequestMethod("GET");
+                        if (con.getResponseCode() == 200) {
+                            connectButton.setText("connect");
+                        } else {
+                            connectButton.setText("server error");
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+
+        this.getChildren().addAll(profileImageView, usernameLabel, nameLabel, followButton, contentVBox, connectButton);
     }
 
 }

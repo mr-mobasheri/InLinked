@@ -13,7 +13,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
@@ -30,7 +29,6 @@ public class HomeController {
 
     @FXML
     private VBox homeVbox;
-
 
     public void initialize() {
         homeVbox.setAlignment(Pos.CENTER);
@@ -52,14 +50,13 @@ public class HomeController {
         button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-
             }
         });
 
-        ImageView imageView = new ImageView(new Image(Path.of("src/main/resources/com/client/pictures/refresh.png").toUri().toString()));
+        ImageView imageView = new ImageView(new Image(Path.of("client/src/main/resources/com/client/pictures/refresh.png").toUri().toString()));
         imageView.setFitHeight(34);
         imageView.setFitWidth(38);
-        imageView.setLayoutX(329);
+        imageView.setLayoutX(431);
         imageView.setLayoutY(4);
         imageView.setPickOnBounds(true);
         imageView.setPreserveRatio(true);
@@ -83,17 +80,86 @@ public class HomeController {
 
     @FXML
     void meButtonPressed(ActionEvent event) {
+        clean();
+        addRefreshButton().setOnAction(this::meButtonPressed);
+        try {
+            homeVbox.getChildren().add(new MyProfileComponent());
+        } catch (IOException e) {
+            e.printStackTrace();
+            homeVbox.getChildren().add(new Label("server error"));
+        }
 
     }
 
     @FXML
     void messageButtonPressed(ActionEvent event) {
+        clean();
+        try {
+            homeVbox.getChildren().add(new MessageComponent());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
     @FXML
     void myNetworkButtonPressed(ActionEvent event) {
+        clean();
+        SearchBarComponent searchBarComponent = new SearchBarComponent();
+        searchBarComponent.searchTextfield.setPromptText("search post");
+        searchBarComponent.searchButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                while (homeVbox.getChildren().size() > 2) {
+                    homeVbox.getChildren().remove(2);
+                }
+                if (searchBarComponent.searchTextfield.getText().isEmpty()) {
+                    searchBarComponent.searchTextfield.setText("please write your search term");
+                }
+                try {
+                    URL url = new URL("http://localhost:8081/home/search/post/" + searchBarComponent.searchTextfield.getText());
+                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                    con.setRequestProperty("Authorization", "Bearer " + InLinkedApplication.token);
+                    con.setRequestMethod("GET");
+                    switch (con.getResponseCode()) {
+                        case 200:
+                            StringBuilder response = new StringBuilder();
+                            try (BufferedReader br = new BufferedReader(
+                                    new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8))) {
+                                String responseLine = null;
+                                while ((responseLine = br.readLine()) != null) {
+                                    response.append(responseLine.trim());
+                                }
+                            }
+                            ObjectMapper objectMapper = new ObjectMapper();
+                            List<Post> posts = objectMapper.readValue(response.toString(), new TypeReference<List<Post>>() {
+                            });
+                            for (Post post : posts) {
+                                if (post.getMediaPath() == null || post.getMediaPath().isEmpty()) {
+                                    TextPostComponent textPostComponent = new TextPostComponent(post);
+                                    homeVbox.getChildren().add(textPostComponent);
+                                } else {
+                                    MediaPostComponent mediaPostComponent = new MediaPostComponent(post);
+                                    homeVbox.getChildren().add(mediaPostComponent);
+                                }
+                            }
+                            break;
+                        case 401:
+                            homeVbox.getChildren().add(new Label("your token is expired! please log out and log in again."));
+                            InLinkedApplication.changeScene(SceneName.login);
+                            break;
+                        default:
+                            System.out.println(con.getResponseCode());
 
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    clean();
+                    homeVbox.getChildren().add(new Label("connection failed!"));
+                }
+            }
+        });
+        homeVbox.getChildren().add(searchBarComponent);
     }
 
     @FXML
@@ -104,7 +170,8 @@ public class HomeController {
 
     @FXML
     void notifButtonPressed(ActionEvent event) {
-
+        clean();
+        homeVbox.getChildren().add(new NotificationComponent());
     }
 
     @FXML
@@ -120,12 +187,11 @@ public class HomeController {
                 }
                 if (searchBarComponent.searchTextfield.getText().isEmpty()) {
                     searchBarComponent.searchTextfield.setText("please write your search term");
-                    return;
                 }
                 try {
                     URL url = new URL("http://localhost:8081/home/search/" + searchBarComponent.searchTextfield.getText());
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                    con.setRequestProperty("Authorization", "Bearer " + LinkedinApplication.token);
+                    con.setRequestProperty("Authorization", "Bearer " + InLinkedApplication.token);
                     con.setRequestMethod("GET");
                     switch (con.getResponseCode()) {
                         case 200:
@@ -163,7 +229,6 @@ public class HomeController {
                     e.printStackTrace();
                     homeVbox.getChildren().add(new Label("connection failed!"));
                 }
-
             }
         });
         homeVbox.getChildren().add(searchBarComponent);
@@ -174,7 +239,7 @@ public class HomeController {
         try {
             URL url = new URL("http://localhost:8081/home");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestProperty("Authorization", "Bearer " + LinkedinApplication.token);
+            con.setRequestProperty("Authorization", "Bearer " + InLinkedApplication.token);
             con.setRequestMethod("GET");
             switch (con.getResponseCode()) {
                 case 200:
@@ -190,12 +255,18 @@ public class HomeController {
                     List<Post> posts = objectMapper.readValue(response.toString(), new TypeReference<List<Post>>() {
                     });
                     for (Post post : posts) {
-                        PostComponent postComponent = new PostComponent(post);
-                        homeVbox.getChildren().add(postComponent);
+                        if (post.getMediaPath() == null || post.getMediaPath().isEmpty()) {
+                            TextPostComponent textPostComponent = new TextPostComponent(post);
+                            homeVbox.getChildren().add(textPostComponent);
+                        } else {
+                            MediaPostComponent mediaPostComponent = new MediaPostComponent(post);
+                            homeVbox.getChildren().add(mediaPostComponent);
+                        }
                     }
                     break;
                 case 401:
                     homeVbox.getChildren().add(new Label("your token is expired! please log out and log in again."));
+                    InLinkedApplication.changeScene(SceneName.login);
                     break;
                 default:
                     System.out.println(con.getResponseCode());
@@ -203,10 +274,14 @@ public class HomeController {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            clean();
             homeVbox.getChildren().add(new Label("connection failed!"));
         }
     }
 
+    public VBox getHomeVbox() {
+        return homeVbox;
+    }
 }
 
 

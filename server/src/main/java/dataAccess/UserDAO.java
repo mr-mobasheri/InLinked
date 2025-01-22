@@ -82,12 +82,19 @@ public class UserDAO extends DAO {
         }
     }
 
-    public List<User> searchUsers(String word){
+    public List<User> searchUsers(String word, String searcherUsername){
         try (Session session = cfg.buildSessionFactory().openSession()) {
             String hql = "FROM User WHERE firstName LIKE :searchTerm OR username LIKE :searchTerm OR email LIKE :searchTerm";
             Query<User> query = session.createQuery(hql, User.class);
             query.setParameter("searchTerm", "%" + word + "%");
-            return query.getResultList();
+            List<User> users = query.getResultList();
+            for (User user : users) {
+                if(user.getUsername().equals(searcherUsername)) {
+                    users.remove(user);
+                    return users;
+                }
+            }
+            return users;
         }
     }
 

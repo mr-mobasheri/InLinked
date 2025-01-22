@@ -28,5 +28,11 @@
         <mapping class="models.Message"/>
         <mapping class="models.Post"/>
         <mapping class="models.Follow"/>
+        <mapping class="models.Comment"/>
+        <mapping class="models.Connect"/>
+        <mapping class="models.Education"/>
+        <mapping class="models.MyInformation"/>
+        <mapping class="models.Skills"/>
+        <mapping class="models.ContactInfo"/>
     </session-factory>
 </hibernate-configuration>

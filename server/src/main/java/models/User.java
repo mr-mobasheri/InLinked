@@ -1,6 +1,8 @@
 package models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -26,7 +28,6 @@ public class User extends Model implements Serializable {
     private String email;
     private String phoneNumber;
     private String country;
-    private long birthday;
     private long dateOfCreat;
     private String profilePath;
 
@@ -44,7 +45,7 @@ public class User extends Model implements Serializable {
     }
 
     public User(String username, String password, String firstName, String lastName, String email,
-                String phoneNumber, String country, long birthday) {
+                String phoneNumber, String country) {
         this.username = username;
         this.password = password;
         this.firstName = firstName;
@@ -52,8 +53,11 @@ public class User extends Model implements Serializable {
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.country = country;
-        this.birthday = birthday;
         this.dateOfCreat = System.currentTimeMillis();
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getUsername() {
@@ -86,10 +90,6 @@ public class User extends Model implements Serializable {
 
     public String getCountry() {
         return country;
-    }
-
-    public long getBirthday() {
-        return birthday;
     }
 
     public long getDateOfCreat() {
@@ -128,10 +128,6 @@ public class User extends Model implements Serializable {
         this.country = country;
     }
 
-    public void setBirthday(long birthday) {
-        this.birthday = birthday;
-    }
-
     public void setDateOfCreat(long dateOfCreat) {
         this.dateOfCreat = dateOfCreat;
     }
@@ -158,6 +154,17 @@ public class User extends Model implements Serializable {
 
     public String getProfilePath() {
         return profilePath;
+    }
+
+    @Override
+    public String toString(){
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
 

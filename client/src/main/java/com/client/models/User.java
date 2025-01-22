@@ -1,24 +1,50 @@
 package com.client.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class User implements Serializable{
+    @JsonProperty("id")
     private int id;
-    private String username;
-    private String password;
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String phoneNumber;
-    private String country;
-    private long birthday;
-    private long dateOfCreat;
-    private String profilePath;
+    @JsonProperty("username")
 
+    private String username;
+    @JsonProperty("password")
+
+    private String password;
+    @JsonProperty("firstName")
+
+    private String firstName;
+    @JsonProperty("lastName")
+
+    private String lastName;
+    @JsonProperty("email")
+
+    private String email;
+    @JsonProperty("phoneNumber")
+
+    private String phoneNumber;
+    @JsonProperty("country")
+
+    private String country;
+    @JsonProperty("birthday")
+
+    private long birthday;
+    @JsonProperty("dateOfCreat")
+
+    private long dateOfCreat;
+    @JsonProperty("profilePath")
+
+    private String profilePath;
+    @JsonIgnore
     private List<Message> sentMessages = new ArrayList<>();
+    @JsonIgnore
     private List<Message> receivedMessages = new ArrayList<>();
+    @JsonIgnore
     private List<Post> posts = new ArrayList<>();
 
     public User() {
@@ -35,6 +61,10 @@ public class User implements Serializable{
         this.country = country;
         this.birthday = birthday;
         this.dateOfCreat = System.currentTimeMillis();
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getUsername() {

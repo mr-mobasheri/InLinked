@@ -4,6 +4,8 @@ module com.client {
     requires com.fasterxml.jackson.databind;
     requires fontawesomefx;
     requires javafx.media;
+    requires com.auth0.jwt;
+    requires java.desktop;
 
     opens com.client.models to com.fasterxml.jackson.databind;
     opens com.client to javafx.fxml;

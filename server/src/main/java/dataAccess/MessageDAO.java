@@ -30,19 +30,18 @@ public class MessageDAO extends DAO {
         }
     }
 
-    public List<Message> getMessagesBetweenUsers(String senderUsername, String receiverUsername) {
-        UserDAO userDAO = new UserDAO();
-        if (!userDAO.isUserExists(senderUsername) || !userDAO.isUserExists(receiverUsername)) {
-            return null;
-        }
+    public List<Message> getMessagesBetweenUsers(String username1, String username2) {
         try (Session session = cfg.buildSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
-            String hql = "FROM Message m WHERE m.sender.username = :senderUsername AND m.receiver.username = :receiverUsername";
-            Query<Message> query = session.createQuery(hql, Message.class);
-            query.setParameter("senderUsername", senderUsername);
-            query.setParameter("receiverUsername", receiverUsername);
+            String hql = "FROM Message m WHERE m.sender = :senderUsername AND m.receiver = :receiverUsername";
+            List<Message> messages = session.createQuery(hql, Message.class).setParameter("senderUsername", username1)
+                    .setParameter("receiverUsername", username2)
+                    .getResultList();
+            messages.addAll(session.createQuery(hql, Message.class).setParameter("senderUsername", username2)
+                    .setParameter("receiverUsername", username1)
+                    .getResultList());
             transaction.commit();
-            return query.getResultList();
+            return messages;
         }
     }
 
@@ -94,26 +93,7 @@ public class MessageDAO extends DAO {
         }
     }
 
-    public void addMessage(Message message, String senderUsername, String receiverUsername) throws UserNotFoundException {
-        try (Session session = cfg.buildSessionFactory().openSession()) {
-            Transaction transaction = session.beginTransaction();
-            User sender = (User) session.createQuery("FROM User WHERE username = :username")
-                    .setParameter("username", senderUsername)
-                    .uniqueResult();
-
-            User receiver = (User) session.createQuery("FROM User WHERE username = :username")
-                    .setParameter("username", receiverUsername)
-                    .uniqueResult();
-            if (sender == null || receiver == null) {
-                throw new UserNotFoundException();
-            }
-            message.setSender(sender);
-            message.setReceiver(receiver);
-            sender.getSentMessages().add(message);
-            receiver.getReceivedMessages().add(message);
-            session.update(sender);
-            session.update(receiver);
-            transaction.commit();
-        }
+    public void addMessage(Message message) {
+        insert(message);
     }
 }

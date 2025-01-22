@@ -1,6 +1,7 @@
 package com.client.components;
 
-import com.client.LinkedinApplication;
+import com.client.InLinkedApplication;
+import com.client.models.Comment;
 import com.client.models.Post;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -20,29 +21,38 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.media.MediaView;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
-
+import javafx.scene.text.TextAlignment;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MediaPostComponent extends StackPane {
     Post post;
     boolean isLiked;
-    String viewerUsername;
+    User viewer;
+    List<Comment> comments = new ArrayList<>();
     AnchorPane mainAnchorpane;
     ImageView profileImageView;
     Label usernameLabel;
     Label nameLabel;
     StackPane viewStackPane;
     ImageView imageView;
-    MediaView mediaView;
+    MediaPlayerComponent mediaPlayerComponent;
     Button commentButton;
     Button likeButton;
     Button likedByButton;
@@ -50,15 +60,33 @@ public class MediaPostComponent extends StackPane {
     ImageView likeImageView;
     TextArea captionTextArea;
 
-    public MediaPostComponent(Post post) {
+    public MediaPostComponent(Post post) throws IOException {
         this.post = post;
-        viewerUsername = getUsernameFromJwt(LinkedinApplication.token);
+        URL url = new URL("http://localhost:8081/home/user/" + getUsernameFromJwt(InLinkedApplication.token));
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setRequestProperty("Authorization", "Bearer " + InLinkedApplication.token);
+        con.setRequestMethod("GET");
+        StringBuilder response = new StringBuilder();
+        try (BufferedReader br = new BufferedReader(
+                new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8))) {
+            String responseLine = null;
+            while ((responseLine = br.readLine()) != null) {
+                response.append(responseLine.trim());
+            }
+        }
+        ObjectMapper objectMapper = new ObjectMapper();
+        if (con.getResponseCode() == 200) {
+            viewer = objectMapper.readValue(response.toString(), User.class);
+        } else {
+            System.out.println(con.getResponseCode());
+            throw new IOException();
+        }
 
         mainAnchorpane = new AnchorPane();
         mainAnchorpane.setPrefSize(500, 600);
         mainAnchorpane.setPadding(new Insets(5));
         if (post.getSender().getProfilePath() == null)
-            profileImageView = new ImageView(new Image(Path.of("src/main/resources/com/client/pictures/user.png").toUri().toString()));
+            profileImageView = new ImageView(new Image(Path.of("client/src/main/resources/com/client/pictures/user.png").toUri().toString()));
         else {
             profileImageView = new ImageView(new Image(Path.of(post.getSender().getProfilePath()).toUri().toString()));
         }
@@ -67,6 +95,7 @@ public class MediaPostComponent extends StackPane {
         profileImageView.setLayoutX(14);
         profileImageView.setLayoutY(11);
         profileImageView.setPreserveRatio(true);
+        profileImageView.setClip(new Circle(16, 16, 45));
 
         usernameLabel = new Label(post.getSender().getUsername());
         usernameLabel.setFont(new Font(16));
@@ -89,11 +118,31 @@ public class MediaPostComponent extends StackPane {
         imageView.setFitWidth(480);
         imageView.setPreserveRatio(true);
 
-        mediaView = new MediaView();
-        mediaView.setFitHeight(400);
-        mediaView.setFitWidth(480);
-
-        viewStackPane.getChildren().addAll(imageView, mediaView);
+        try {
+            Path filePath = Paths.get(new URI(post.getMediaPath()));
+            String mimeType = Files.probeContentType(filePath);
+            if (mimeType != null) {
+                if (mimeType.startsWith("image/")) {
+                    imageView.setImage(new Image(post.getMediaPath()));
+                    viewStackPane.getChildren().add(imageView);
+                } else if (mimeType.startsWith("video/")) {
+                    mediaPlayerComponent = new MediaPlayerComponent(new MediaPlayer(new Media(post.getMediaPath())));
+                    viewStackPane.getChildren().add(mediaPlayerComponent);
+                } else {
+                    System.out.println("The file is neither an image nor a video.");
+                    imageView.setImage(new Image(Path.of("client/src/main/resources/com/client/pictures/cantOpenFile.png").toUri().toString()));
+                }
+            } else {
+                System.out.println("MIME type could not be determined.");
+                imageView.setImage(new Image(Path.of("client/src/main/resources/com/client/pictures/cantOpenFile.png").toUri().toString()));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            imageView.setImage(new Image(Path.of("client/src/main/resources/com/client/pictures/cantOpenFile.png").toUri().toString()));
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            imageView.setImage(new Image(Path.of("client/src/main/resources/com/client/pictures/cantOpenFile.png").toUri().toString()));
+        }
 
         likeButton = new Button();
         likeButton.setLayoutX(14);
@@ -101,13 +150,13 @@ public class MediaPostComponent extends StackPane {
         likeButton.setPrefSize(27, 26);
         likeButton.setStyle("-fx-background-color: w;");
         for (String username : post.getLikerUsername()) {
-            if (username.equals(viewerUsername)) {
-                likeImageView = new ImageView(new Image(Path.of("src/main/resources/com/client/pictures/like.png").toUri().toString()));
+            if (username.equals(viewer.getUsername())) {
+                likeImageView = new ImageView(new Image(Path.of("client/src/main/resources/com/client/pictures/like.png").toUri().toString()));
                 isLiked = true;
             }
         }
         if (!isLiked) {
-            likeImageView = new ImageView(new Image(Path.of("src/main/resources/com/client/pictures/unlike.png").toUri().toString()));
+            likeImageView = new ImageView(new Image(Path.of("client/src/main/resources/com/client/pictures/unlike.png").toUri().toString()));
         }
         likeImageView.setFitHeight(38);
         likeImageView.setFitWidth(32);
@@ -120,14 +169,14 @@ public class MediaPostComponent extends StackPane {
                     try {
                         URL url = new URL("http://localhost:8081/home/post/unlike/" + post.getId());
                         HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                        con.setRequestProperty("Authorization", "Bearer " + LinkedinApplication.token);
+                        con.setRequestProperty("Authorization", "Bearer " + InLinkedApplication.token);
                         con.setRequestMethod("GET");
                         if (con.getResponseCode() != 200) {
                             System.out.println(con.getResponseCode());
                         } else {
                             isLiked = false;
-                            post.getLikerUsername().remove(viewerUsername);
-                            likeImageView.setImage(new Image(Path.of("src/main/resources/com/client/pictures/unlike.png").toUri().toString()));
+                            post.getLikerUsername().remove(viewer.getUsername());
+                            likeImageView.setImage(new Image(Path.of("client/src/main/resources/com/client/pictures/unlike.png").toUri().toString()));
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -136,14 +185,14 @@ public class MediaPostComponent extends StackPane {
                     try {
                         URL url = new URL("http://localhost:8081/home/post/like/" + post.getId());
                         HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                        con.setRequestProperty("Authorization", "Bearer " + LinkedinApplication.token);
+                        con.setRequestProperty("Authorization", "Bearer " + InLinkedApplication.token);
                         con.setRequestMethod("GET");
                         if (con.getResponseCode() != 200) {
                             System.out.println(con.getResponseCode());
                         } else {
-                            likeImageView.setImage(new Image(Path.of("src/main/resources/com/client/pictures/like.png").toUri().toString()));
+                            likeImageView.setImage(new Image(Path.of("client/src/main/resources/com/client/pictures/like.png").toUri().toString()));
                             isLiked = true;
-                            post.getLikerUsername().add(viewerUsername);
+                            post.getLikerUsername().add(viewer.getUsername());
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -201,9 +250,9 @@ public class MediaPostComponent extends StackPane {
                 MediaPostComponent.super.getChildren().add(root);
 
                 try {
-                    URL url = new URL("http://localhost:8081/home/user/" + post.getId());
+                    URL url = new URL("http://localhost:8081/home/user");
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                    con.setRequestProperty("Authorization", "Bearer " + LinkedinApplication.token);
+                    con.setRequestProperty("Authorization", "Bearer " + InLinkedApplication.token);
                     con.setRequestMethod("POST");
                     con.setDoOutput(true);
                     ObjectMapper objectMapper = new ObjectMapper();
@@ -242,7 +291,7 @@ public class MediaPostComponent extends StackPane {
         commentButton.setLayoutY(451);
         commentButton.setPrefSize(27, 26);
         commentButton.setStyle("-fx-background-color: w;");
-        commentImageView = new ImageView(new Image(Path.of("src/main/resources/com/client/pictures/comment.png").toUri().toString()));
+        commentImageView = new ImageView(new Image(Path.of("client/src/main/resources/com/client/pictures/comment.png").toUri().toString()));
         commentImageView.setFitHeight(38);
         commentImageView.setFitWidth(32);
         commentImageView.setPreserveRatio(true);
@@ -298,15 +347,14 @@ public class MediaPostComponent extends StackPane {
                 sendButton.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent actionEvent) {
-                        if(textArea.getText().isEmpty()) {
+                        if (textArea.getText().isEmpty()) {
                             textArea.setText("please write something");
                             textArea.selectAll();
-                        }
-                        else {
+                        } else {
                             try {
                                 URL url = new URL("http://localhost:8081/home/post/comment/" + post.getId());
                                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                                con.setRequestProperty("Authorization", "Bearer " + LinkedinApplication.token);
+                                con.setRequestProperty("Authorization", "Bearer " + InLinkedApplication.token);
                                 con.setRequestMethod("POST");
                                 con.setDoOutput(true);
                                 ObjectMapper objectMapper = new ObjectMapper();
@@ -314,10 +362,40 @@ public class MediaPostComponent extends StackPane {
                                 if (con.getResponseCode() != 200) {
                                     System.out.println(con.getResponseCode());
                                 } else {
-                                    post.getComments().add(textArea.getText());
-                                    Label label = new Label(">>" + textArea.getText());
-                                    label.setFont(new Font(20));
-                                    vBox.getChildren().add(label);
+                                   comments.add(new Comment(textArea.getText(), viewer.getUsername(), viewer.getProfilePath()));
+                                    AnchorPane commentRoot = new AnchorPane();
+                                    commentRoot.setPrefSize(500.0, 100.0);
+                                    commentRoot.setStyle("-fx-border-color: black; -fx-border-width: 3;");
+
+                                    ImageView profileImageView;
+                                    if (viewer.getProfilePath() == null)
+                                        profileImageView = new ImageView(new Image(Path.of("client/src/main/resources/com/client/pictures/user.png").toUri().toString()));
+                                    else {
+                                        profileImageView = new ImageView(new Image(Path.of(viewer.getProfilePath()).toUri().toString()));
+                                    }
+                                    profileImageView.setFitHeight(60.0);
+                                    profileImageView.setFitWidth(55.0);
+                                    profileImageView.setLayoutX(14.0);
+                                    profileImageView.setLayoutY(8.0);
+                                    profileImageView.setPickOnBounds(true);
+                                    profileImageView.setPreserveRatio(true);
+
+                                    Label usernameLabel = new Label(viewer.getUsername());
+                                    usernameLabel.setLayoutX(74.0);
+                                    usernameLabel.setLayoutY(6.0);
+                                    usernameLabel.setFont(new Font(15.0));
+
+                                    Label commentLabel = new Label(textArea.getText());
+                                    commentLabel.setAlignment(javafx.geometry.Pos.TOP_LEFT);
+                                    commentLabel.setLayoutX(74.0);
+                                    commentLabel.setLayoutY(28.0);
+                                    commentLabel.setPrefSize(420.0, 62.0);
+                                    commentLabel.setTextAlignment(TextAlignment.LEFT);
+                                    commentLabel.setWrapText(true);
+                                    commentLabel.setFont(new Font(18.0));
+
+                                    commentRoot.getChildren().addAll(profileImageView, usernameLabel, commentLabel);
+                                    vBox.getChildren().add(commentRoot);
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -327,11 +405,64 @@ public class MediaPostComponent extends StackPane {
                 });
 
                 root.getChildren().addAll(backButton, commentsLabel, scrollPane, textArea, sendButton);
+                try {
+                    URL url = new URL("http://localhost:8081/home/post/comment/" + post.getId());
+                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                    con.setRequestProperty("Authorization", "Bearer " + InLinkedApplication.token);
+                    con.setRequestMethod("GET");
+                    if (con.getResponseCode() != 200) {
+                        System.out.println(con.getResponseCode());
+                    } else {
+                        StringBuilder response = new StringBuilder();
+                        try (BufferedReader br = new BufferedReader(
+                                new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8))) {
+                            String responseLine = null;
+                            while ((responseLine = br.readLine()) != null) {
+                                response.append(responseLine.trim());
+                            }
+                        }
+                        List<Comment> comments1 = objectMapper.readValue(response.toString(), new TypeReference<List<Comment>>() {
+                        });
+                        comments.clear();
+                        comments.addAll(comments1);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
-                for (String comment : post.getComments()) {
-                    Label label = new Label(">>" + comment);
-                    label.setFont(new Font(20));
-                    vBox.getChildren().add(label);
+                for (Comment comment : comments) {
+                    AnchorPane commentRoot = new AnchorPane();
+                    commentRoot.setPrefSize(500.0, 100.0);
+                    commentRoot.setStyle("-fx-border-color: black; -fx-border-width: 3;");
+                    ImageView profileImageView;
+                    if (comment.getSenderProfilePath() == null)
+                        profileImageView = new ImageView(new Image(Path.of("client/src/main/resources/com/client/pictures/user.png").toUri().toString()));
+                    else {
+                        profileImageView = new ImageView(new Image(Path.of(comment.getSenderProfilePath()).toUri().toString()));
+                    }
+                    profileImageView.setFitHeight(60.0);
+                    profileImageView.setFitWidth(55.0);
+                    profileImageView.setLayoutX(14.0);
+                    profileImageView.setLayoutY(8.0);
+                    profileImageView.setPickOnBounds(true);
+                    profileImageView.setPreserveRatio(true);
+
+                    Label usernameLabel = new Label(comment.getSenderUsername());
+                    usernameLabel.setLayoutX(74.0);
+                    usernameLabel.setLayoutY(6.0);
+                    usernameLabel.setFont(new Font(15.0));
+
+                    Label commentLabel = new Label(comment.getText());
+                    commentLabel.setAlignment(javafx.geometry.Pos.TOP_LEFT);
+                    commentLabel.setLayoutX(74.0);
+                    commentLabel.setLayoutY(28.0);
+                    commentLabel.setPrefSize(420.0, 62.0);
+                    commentLabel.setTextAlignment(TextAlignment.LEFT);
+                    commentLabel.setWrapText(true);
+                    commentLabel.setFont(new Font(18.0));
+
+                    commentRoot.getChildren().addAll(profileImageView, usernameLabel, commentLabel);
+                    vBox.getChildren().add(commentRoot);
                 }
                 MediaPostComponent.super.getChildren().add(root);
             }

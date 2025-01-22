@@ -1,15 +1,18 @@
 package models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Entity
-public class Post extends Model {
+public class Post extends Model implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -18,13 +21,8 @@ public class Post extends Model {
     @JoinColumn(referencedColumnName = "username")
     private User sender;
     private String text;
-    @ElementCollection
-    @CollectionTable(joinColumns = @JoinColumn)
-    private List<String> mediaPaths = new ArrayList<>();
 
-    @ElementCollection
-    @CollectionTable(joinColumns = @JoinColumn)
-    private List<String> comments = new ArrayList<>();
+    private String mediaPath;
 
     @ElementCollection
     @CollectionTable(joinColumns = @JoinColumn)
@@ -42,10 +40,21 @@ public class Post extends Model {
         this.sender = sender;
         this.text = text;
         this.dateOfCreat = System.currentTimeMillis();
-        mediaPaths = new ArrayList<String>();
     }
 
     public Post() {
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setLikerUsername(List<String> likerUsername) {
+        this.likerUsername = likerUsername;
+    }
+
+    public void setDateOfCreat(long dateOfCreat) {
+        this.dateOfCreat = dateOfCreat;
     }
 
     public User getSender() {
@@ -56,27 +65,12 @@ public class Post extends Model {
         return text;
     }
 
-    public List<String> getMediaPaths() {
-        if(mediaPaths == null) {
-            mediaPaths = new ArrayList<>();
-        }
-        return mediaPaths;
-    }
-
     public void setSender(User sender) {
         this.sender = sender;
     }
 
     public void setText(String text) {
         this.text = text;
-    }
-
-    public void setMediaPaths(ArrayList<String> mediaPaths) {
-        this.mediaPaths = mediaPaths;
-    }
-
-    public List<String> getComments() {
-        return comments;
     }
 
     public List<String> getLikerUsername() {
@@ -87,10 +81,22 @@ public class Post extends Model {
         return dateOfCreat;
     }
 
-    public void setMediaPaths(String[] mediaPaths) {
-        this.mediaPaths.clear();
-        if (mediaPaths != null) {
-            Collections.addAll(this.mediaPaths, mediaPaths);
+    public void setMediaPath(String mediaPath) {
+        this.mediaPath = mediaPath;
+    }
+
+    public String getMediaPath() {
+        return mediaPath;
+    }
+
+    @Override
+    public String toString() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
